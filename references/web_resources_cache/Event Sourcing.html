@@ -1,0 +1,1513 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app200.us.archive.org';v.server_ms=689;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=1B2M2Y8A" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=1B2M2Y8A" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("https://www.martinfowler.com/eaaDev/EventSourcing.html","20250607132202","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1749302522");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1B2M2Y8A" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=1B2M2Y8A" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta content="uft-8" name="charset"></meta>
+
+<title>Event Sourcing</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+<meta content="summary" name="twitter:card"></meta>
+
+<meta content="16665197" name="twitter:site:id"></meta>
+
+<meta content="@martinfowler" name="twitter:site"></meta>
+
+<meta content="Event Sourcing" property="og:title"></meta>
+
+<meta content="https://web.archive.org/web/20250607132202/https://martinfowler.com/eaaDev/EventSourcing.html" property="og:url"></meta>
+
+<meta content="Capture all changes to an application state as a sequence of events." property="og:description"></meta>
+
+<meta content="https://web.archive.org/web/20250607132202im_/https://martinfowler.com/logo-sq.png" property="og:image"></meta>
+
+<meta content="martinfowler.com" property="og:site_name"></meta>
+
+<meta content="article" property="og:type"></meta>
+
+<meta content="2005-12-12" property="og:article:modified_time"></meta>
+
+<meta content="width=device-width, initial-scale=1" name="viewport"></meta>
+
+<link href="/web/20250607132202cs_/https://www.martinfowler.com/eaaDev/eaa-dev.css" rel="stylesheet" type="text/css"></link>
+</head>
+
+<body><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20250607132202/https%3A//www.martinfowler.com/eaaDev/EventSourcing.html"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://www.martinfowler.com/eaaDev/EventSourcing.html" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20250607132202" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20250607132202*/https://www.martinfowler.com/eaaDev/EventSourcing.html" title="See a list of every capture for this URL">992 captures</a>
+          <div class="r" title="Timespan for captures of this URL">15 Dec 2005 - 11 Jun 2025</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="750" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20250503150231/https://martinfowler.com/eaaDev/EventSourcing.html" title="03 May 2025"><strong>May</strong></a></td>
+            <td class="c" id="displayMonthEl" title="You are here: 13:22:02 Jun 07, 2025">JUN</td>
+            <td class="f" nowrap="nowrap">Jul</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20250604082953/https://martinfowler.com/eaaDev/EventSourcing.html" title="08:29:53 Jun 04, 2025"><img src="https://web-static.archive.org/_static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 13:22:02 Jun 07, 2025">07</td>
+            <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20250611005100/http://martinfowler.com/eaaDev/EventSourcing.html" title="00:51:00 Jun 11, 2025"><img src="https://web-static.archive.org/_static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20240521105141/https://martinfowler.com/eaaDev/EventSourcing.html" title="21 May 2024"><strong>2024</strong></a></td>
+            <td class="c" id="displayYearEl" title="You are here: 13:22:02 Jun 07, 2025">2025</td>
+            <td class="f" nowrap="nowrap">2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="http://faq.web.archive.org/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20250607132202/http://web.archive.org/screenshot/https://www.martinfowler.com/eaaDev/EventSourcing.html"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20250607132202/https://www.martinfowler.com/eaaDev/EventSourcing.html" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20250607132202/https://www.martinfowler.com/eaaDev/EventSourcing.html" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/reddit-com)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/reddit-com" target="_new"><span class="wm-title">Reddit</span></a></div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20250607132202/https://www.martinfowler.com/eaaDev/EventSourcing.html</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(750,27,25,2,"web","https://www.martinfowler.com/eaaDev/EventSourcing.html","20250607132202",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1B2M2Y8A","https://web-static.archive.org/_static/css/iconochive.css?v=1B2M2Y8A"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ <header id="banner" style="background-image: url(&quot;/web/20250607132202im_/https://www.martinfowler.com/banner.png&quot;); background-repeat: no-repeat">
+
+<div class="name-logo"><a href="https://web.archive.org/web/20250607132202/https://martinfowler.com/"><img src="/web/20250607132202im_/https://www.martinfowler.com/mf-name-white.png"></img></a></div>
+  <div class="search">
+    <!-- SiteSearch Google -->
+    <form method="GET" action="https://web.archive.org/web/20250607132202/https://www.google.com/search">
+      <input type="hidden" name="ie" value="UTF-8"/>
+      <input type="hidden" name="oe" value="UTF-8"/>
+      <input class="field" type="text" name="q" size="15" maxlength="255" value=""/>
+      <button class="button" type="submit" name="btnG" value=" " title="Search"/>
+      <input type="hidden" name="domains" value="martinfowler.com"/>
+      <input type="hidden" name="sitesearch" value=""/> 
+      <input type="hidden" name="sitesearch" value="martinfowler.com"/>
+    </form>
+  </div>
+
+<div class="menu-button navmenu-button"><a class="icon icon-bars" href="#navmenu-bottom"></a></div>
+
+<nav class="top-menu">
+<ul>
+<li><a class="" href="https://web.archive.org/web/20250607132202/https://refactoring.com/">Refactoring</a></li>
+
+<li><a class="" href="/web/20250607132202/https://www.martinfowler.com/agile.html">Agile</a></li>
+
+<li><a class="" href="/web/20250607132202/https://www.martinfowler.com/architecture">Architecture</a></li>
+
+<li><a class="" href="/web/20250607132202/https://www.martinfowler.com/aboutMe.html">About</a></li>
+
+<li><a class="tw" href="https://web.archive.org/web/20250607132202/https://www.thoughtworks.com/">Thoughtworks</a></li>
+
+<li><a class="icon icon-rss" href="/web/20250607132202/https://www.martinfowler.com/feed.atom" title="feed"></a></li>
+
+<li><a class="icon icon-twitter" href="https://web.archive.org/web/20250607132202/https://www.twitter.com/martinfowler" title="Twitter stream"></a></li>
+
+<li class="icon"><a href="https://web.archive.org/web/20250607132202/https://toot.thoughtworks.com/@mfowler" title="Mastodon stream"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"><path d="M21.2595 13.9898C20.9852 15.4006 18.8033 16.9446 16.2974 17.2439C14.9907 17.3998 13.7041 17.5431 12.3321 17.4802C10.0885 17.3774 8.31809 16.9446 8.31809 16.9446C8.31809 17.163 8.33156 17.371 8.3585 17.5655C8.65019 19.7797 10.5541 19.9124 12.3576 19.9742C14.1779 20.0365 15.7987 19.5254 15.7987 19.5254L15.8735 21.1711C15.8735 21.1711 14.6003 21.8548 12.3321 21.9805C11.0814 22.0493 9.52849 21.9491 7.71973 21.4703C3.79684 20.432 3.12219 16.2504 3.01896 12.0074C2.98749 10.7477 3.00689 9.55981 3.00689 8.56632C3.00689 4.22771 5.84955 2.95599 5.84955 2.95599C7.2829 2.29772 9.74238 2.0209 12.2993 2H12.3621C14.919 2.0209 17.3801 2.29772 18.8133 2.95599C18.8133 2.95599 21.6559 4.22771 21.6559 8.56632C21.6559 8.56632 21.6916 11.7674 21.2595 13.9898ZM18.3029 8.9029C18.3029 7.82924 18.0295 6.97604 17.4805 6.34482C16.9142 5.71359 16.1726 5.39001 15.2522 5.39001C14.187 5.39001 13.3805 5.79937 12.8473 6.61819L12.3288 7.48723L11.8104 6.61819C11.2771 5.79937 10.4706 5.39001 9.40554 5.39001C8.485 5.39001 7.74344 5.71359 7.17719 6.34482C6.62807 6.97604 6.3547 7.82924 6.3547 8.9029V14.1562H8.43597V9.05731C8.43597 7.98246 8.88822 7.4369 9.79281 7.4369C10.793 7.4369 11.2944 8.08408 11.2944 9.36376V12.1547H13.3634V9.36376C13.3634 8.08408 13.8646 7.4369 14.8648 7.4369C15.7694 7.4369 16.2216 7.98246 16.2216 9.05731V14.1562H18.3029V8.9029Z"></path></svg>
+</a></li>
+
+<li class="icon"><a href="https://web.archive.org/web/20250607132202/https://www.linkedin.com/in/martin-fowler-com/" title="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"><path d="M4.00098 3H20.001C20.5533 3 21.001 3.44772 21.001 4V20C21.001 20.5523 20.5533 21 20.001 21H4.00098C3.44869 21 3.00098 20.5523 3.00098 20V4C3.00098 3.44772 3.44869 3 4.00098 3ZM5.00098 5V19H19.001V5H5.00098ZM7.50098 9C6.67255 9 6.00098 8.32843 6.00098 7.5C6.00098 6.67157 6.67255 6 7.50098 6C8.3294 6 9.00098 6.67157 9.00098 7.5C9.00098 8.32843 8.3294 9 7.50098 9ZM6.50098 10H8.50098V17.5H6.50098V10ZM12.001 10.4295C12.5854 9.86534 13.2665 9.5 14.001 9.5C16.072 9.5 17.501 11.1789 17.501 13.25V17.5H15.501V13.25C15.501 12.2835 14.7175 11.5 13.751 11.5C12.7845 11.5 12.001 12.2835 12.001 13.25V17.5H10.001V10H12.001V10.4295Z"></path></svg>
+</a></li>
+
+<li class="icon"><a href="https://web.archive.org/web/20250607132202/https://bsky.app/profile/martinfowler.com" title="BlueSky"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"><path d="M12 11.3884C11.0942 9.62673 8.62833 6.34423 6.335 4.7259C4.13833 3.17506 3.30083 3.4434 2.75167 3.69256C2.11583 3.9784 2 4.95506 2 5.52839C2 6.10339 2.315 10.2367 2.52 10.9276C3.19917 13.2076 5.61417 13.9776 7.83917 13.7309C4.57917 14.2142 1.68333 15.4017 5.48083 19.6292C9.65833 23.9542 11.2058 18.7017 12 16.0392C12.7942 18.7017 13.7083 23.7651 18.4442 19.6292C22 16.0392 19.4208 14.2142 16.1608 13.7309C18.3858 13.9784 20.8008 13.2076 21.48 10.9276C21.685 10.2376 22 6.10256 22 5.52923C22 4.95423 21.8842 3.97839 21.2483 3.6909C20.6992 3.44256 19.8617 3.17423 17.665 4.72423C15.3717 6.34506 12.9058 9.62756 12 11.3884Z"></path></svg></a></li>
+</ul>
+</nav>
+</header>
+<nav id="top-navmenu">
+<nav class="navmenu">
+<div class="nav-head">  <div class="search">
+    <!-- SiteSearch Google -->
+    <form method="GET" action="https://web.archive.org/web/20250607132202/https://www.google.com/search">
+      <input type="hidden" name="ie" value="UTF-8"/>
+      <input type="hidden" name="oe" value="UTF-8"/>
+      <input class="field" type="text" name="q" size="15" maxlength="255" value=""/>
+      <button class="button" type="submit" name="btnG" value=" " title="Search"/>
+      <input type="hidden" name="domains" value="martinfowler.com"/>
+      <input type="hidden" name="sitesearch" value=""/> 
+      <input type="hidden" name="sitesearch" value="martinfowler.com"/>
+    </form>
+  </div>
+
+<div class="closediv">
+<span class="close" title="close"></span>
+</div>
+</div>
+
+<div class="nav-body">
+<div class="topics">
+<h2>Topics</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/architecture">Architecture</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://refactoring.com/">Refactoring</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/agile.html">Agile</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/delivery.html">Delivery</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/microservices">Microservices</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/data">Data</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/testing">Testing</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/dsl.html">DSL</a></p>
+</div>
+
+<div class="about">
+<h2>about me</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/aboutMe.html">About</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/books">Books</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/faq.html">FAQ</a></p>
+</div>
+
+<div class="content">
+<h2>content</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/videos.html">Videos</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/tags">Content Index</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/articles/eurogames">Board Games</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/photos">Photography</a></p>
+</div>
+
+<div class="tw">
+<h2>Thoughtworks</h2>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://thoughtworks.com/insights">Insights</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://thoughtworks.com/careers">Careers</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://thoughtworks.com/radar">Radar</a></p>
+</div>
+
+<div class="feeds">
+<h2>follow</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/feed.atom">RSS</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://toot.thoughtworks.com/@mfowler">Mastodon</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://www.linkedin.com/in/martin-fowler-com/">LinkedIn</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://www.twitter.com/martinfowler">X (Twitter)</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://boardgamegeek.com/blog/13064/martins-7th-decade">BGG</a></p>
+</div>
+</div>
+</nav>
+</nav>
+
+<main>
+<div class="pattern">
+<h1>Event Sourcing</h1>
+
+<p class="intent">Capture all changes to an application state as a sequence of
+  events.</p>
+
+<div class="frontMatter">
+<div class="frontLeft">
+<div class="author-list">
+<div class="author">
+<div class="photo"><a href="/web/20250607132202/https://www.martinfowler.com/"><img alt="Photo of Martin Fowler" src="/web/20250607132202im_/https://www.martinfowler.com/mf.jpg" width="80"></img></a></div>
+
+<address class="name"><a href="/web/20250607132202/https://www.martinfowler.com/" rel="author">Martin Fowler</a></address>
+</div>
+</div>
+
+<p class="date">12 December 2005</p>
+</div>
+</div>
+
+<div class="eaadev-notice"><p>This is part of the <a href="/web/20250607132202/https://www.martinfowler.com/eaaDev">Further Enterprise Application Architecture development</a> writing that I was doing in the mid 2000’s. Sadly too many other things have claimed my attention since, so I haven’t had time to work on them further, nor do I see much time in the foreseeable future. As such this material is very much in draft form and I won’t be doing any corrections or updates until I’m able to find time to work on it again.</p>
+
+</div>
+
+<div class="opening">
+<p>We can query an application's state to find out the current
+    state of the world, and this answers many questions. However there
+    are times when we don't just want to see where we are, we also
+    want to know how we got there.</p>
+
+<p><span class="self">Event Sourcing</span> ensures that all changes to application state are
+    stored as a sequence of events. Not just can we query these
+    events, we can also use the event log to reconstruct past states,
+    and as a foundation to automatically adjust the state to cope with
+    retroactive changes.</p>
+</div>
+
+<section class="how">
+<h2>How it Works</h2>
+
+<p>The fundamental idea of <span class="self">Event Sourcing</span> is that of ensuring every
+    change to the state of an application is captured in an event
+    object, and that these event objects are themselves stored in the
+    sequence they were applied for the same lifetime as the
+    application state itself.</p>
+
+<p>Let's consider a simple example to do with shipping
+    notifications. In this example we have many ships on the high
+    seas, and we need to know where they are. A simple way to do this
+    is to have a tracking application with methods to allow us to tell
+    when a ship arrives or leaves at a port.</p>
+
+<div class="figure " id="eventSourcing_simpleService.gif"><img src="/web/20250607132202im_/https://www.martinfowler.com/eaaDev/eventSourcing/simpleService.gif"></img>
+<p class="photoCaption">Figure 1: A simple interface
+    for tracking shipping movements.</p>
+</div>
+
+<div class="clear"></div>
+
+<p>In this case when the service is called, it finds the relevant
+    ship and updates its location. The ship objects record the current
+    known state of the ships.</p>
+
+<p>Introducing <span class="self">Event Sourcing</span> adds a step to this process. Now the
+    service creates an event object to record the change and processes
+    it to update the ship.</p>
+
+<div class="figure " id="eventSourcing_simpleEventCd.gif"><img src="/web/20250607132202im_/https://www.martinfowler.com/eaaDev/eventSourcing/simpleEventCd.gif"></img>
+<p class="photoCaption">Figure 2: Using an event to
+    capture the change.</p>
+</div>
+
+<div class="clear"></div>
+
+<p>Looking at just the processing, this is just an unnecessary
+    level of indirection. The interesting difference is when we look
+    at what persists in the application after a few changes. Let's
+    imagine some simple changes:</p>
+
+<ul>
+<li>The Ship 'King Roy' departs San Francisco</li>
+
+<li>The Ship 'Prince Trevor' arrives at Los Angeles</li>
+
+<li>The Ship 'King Roy' arrives in Hong Kong</li>
+</ul>
+
+<p>With the basic service, we see just the final state captured by
+    the ship objects. I'll refer to this as the application state.</p>
+
+<div class="figure " id="eventSourcing_simpleServiceHis.gif"><img src="/web/20250607132202im_/https://www.martinfowler.com/eaaDev/eventSourcing/simpleServiceHis.gif"></img>
+<p class="photoCaption">Figure 3: State after a few
+    movements tracked by simple tracker.</p>
+</div>
+
+<div class="clear"></div>
+
+<p>With <span class="self">Event Sourcing</span> we also capture each event. If we are using a
+    persistent store the events will be persisted just the same as the
+    ship objects are. I find it useful to say that we are persisting
+    two different things an application state
+    and an event log.</p>
+
+<div class="figure " id="eventSourcing_simpleEventHis.gif"><img src="/web/20250607132202im_/https://www.martinfowler.com/eaaDev/eventSourcing/simpleEventHis.gif"></img>
+<p class="photoCaption">Figure 4: State after a few
+    movements tracked by event sourced tracker.</p>
+</div>
+
+<div class="clear"></div>
+
+<p>The most obvious thing we've gained by using <span class="self">Event Sourcing</span> is that we
+    now have a log of all the changes. Not just can we see where each
+    ship is, we can see where it's been. However this is a small
+    gain. We could also do this by keeping a history of past ports in
+    the ship object, or by writing to a log file whenever a ship
+    moves. Both of these can give us an adequate history.</p>
+
+<p>The key to <span class="self">Event Sourcing</span> is that we guarantee that all changes to the
+    domain objects are initiated by the event objects. This leads to a
+    number of facilities that can be built on top of the event log:</p>
+
+<ul>
+<li>Complete Rebuild: We can discard the application state
+completely and rebuild it by re-running the events from the event log
+on an empty application.</li>
+
+<li>Temporal Query: We can determine the application state at
+any point in time. Notionally we do this by starting with a blank
+state and rerunning the events up to a particular time or event. We
+can take this further by considering multiple time-lines (analogous to
+branching in a version control system).</li>
+
+<li>Event Replay: If we find a past event was incorrect, we can
+compute the consequences by reversing it and later events and then
+replaying the new event and later events. (Or indeed by throwing away
+the application state and replaying all events with the correct event
+in sequence.) The same technique can handle events received in the
+wrong sequence - a common problem with systems that communicate with
+asynchronous messaging.</li>
+</ul>
+
+<p>A common example of an application that uses <span class="self">Event Sourcing</span> is a
+    version control system. Such a system uses temporal queries quite
+    often. Subversion uses complete rebuilds whenever you use dump and
+    restore to move stuff between repository files. I'm not aware of
+    any that do event replay since they are not particularly
+    interested in that information. Enterprise applications that use
+    <span class="self">Event Sourcing</span> are rarer, but I have seen a few applications (or parts of
+    applications) that use it.</p>
+
+<section id="ApplicationStateStorage">
+<h3>Application State Storage</h3>
+
+<p>The simplest way to think of using <span class="self">Event Sourcing</span> is to calculate a
+requested application state by starting from a blank application state
+and then applying the events to reach the desired state. It's equally
+simple to see why this is a slow process, particularly if there are
+many events.</p>
+
+<p>In many applications it's more common to request recent
+application states, if so a faster alternative is to store the current
+application state and if someone wants the special features that
+<span class="self">Event Sourcing</span> offers then that additional capability is built on top.</p>
+
+<p>Application states can be stored either in memory or on disk.
+Since an application state is purely derivable from the event log, you
+can cache it anywhere you like. A system in use during a working day
+could be started at the beginning of the day from an overnight snapshot
+and hold the current application state in memory. Should it crash it
+replays the events from the overnight store. At the end of the working
+day a new snapshot can be made of the state. New snapshots can be made
+at any time in parallel without bringing down the running
+application.</p>
+
+<p>The official system of record can either be the event logs or
+the current application state. If the current application state is
+held in a database, then the event logs may only be there for audit
+and special processing. Alternatively the event logs can be the
+official record and databases can be built from them whenever
+needed.</p>
+</section>
+
+<section id="StructuringTheEventHandlerLogic">
+<h3>Structuring the Event Handler Logic</h3>
+
+<p>There are a number of choices about where to put the logic
+      for handling events. The primary choice is whether to put the
+      logic in <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/transactionScript.html">Transaction Scripts</a> or <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/domainModel.html">Domain Model</a>. As usual <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/transactionScript.html">Transaction Scripts</a> are better for simple
+      logic and a <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/domainModel.html">Domain Model</a> is better when things get more
+      complicated. </p>
+
+<p>In general I have noticed a tendency to use <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/transactionScript.html">Transaction Scripts</a> with applications that
+      drive changes through events or commands. Indeed some people
+      believe that this is a necessary way of structuring systems that
+      are driven this way. This is, however, an
+      illusion. </p>
+
+<p>A good way to think of this is that there are two
+responsibilities involved. <i>Processing domain logic</i> is the
+business logic that manipulates the application. <i>Processing
+selection logic</i> is the logic that chooses which chunk of
+processing domain logic should run depending on the incoming event.
+You can combine these together, essentially this is the <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/transactionScript.html">Transaction Script</a> approach, but you can also separate
+      them by putting the processing selection logic in the event
+      processing system, and it calls a method in the domain model
+      that contains the processing domain logic.</p>
+
+<p>Once you've made that decision, the next is whether to put the
+      processing selection logic in the event object itself, or have a
+      separate event processor object. The problem with the processor is that
+      it necessarily runs different logic depending on the type of
+      event, which is the kind of type switch that is abhorrent to any
+      good OOer. All things being equal you want the processing selection
+      logic in the event itself, since that's the thing that varies
+      with the type of event.</p>
+
+<p>Of course all things aren't always equal. One case where
+      having a separate processor can make sense is when the event
+      object is a <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/dataTransferObject.html">DTO</a> which is
+      serialized and de-serialized by some automatic means that
+      prohibits putting code into the event. In this case you need to
+      find selection logic for the event. My inclination would be to
+      avoid this if at all possible, if you can't then treat the
+      <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/dataTransferObject.html">DTO</a> as an hidden data holder
+      for the event and still treat the event as a regular polymorphic
+      object. In this case it's worth doing something moderately
+      clever to match the serialized event DTOs to the actual events
+      using configuration files or (better) naming conventions.</p>
+
+<p>If there's no need to reverse events, then then it's easy to
+make a <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/domainModel.html">Domain Model</a> ignorant of the event
+log. Reversing logic makes this more tricky since the
+      <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/domainModel.html">Domain Model</a> needs to store and retrieve the
+prior state, which makes it much more handy for the
+<a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/domainModel.html">Domain Model</a> to be aware of the event log.</p>
+</section>
+
+<section id="ReversingEvents">
+<h3>Reversing Events</h3>
+
+<p>As well as events playing themselves forwards, it's also
+often useful for them to be able to reverse themselves. </p>
+
+<p>Reversal is the most straightforward when the event is cast
+in the form of a difference. An example of this would be “add $10 to
+Martin's account” as opposed to “set Martin's account to $110”. In
+the former case I can reverse by just subtracting $10, but in the
+latter case I don't have enough information to recreate the past value
+of the account.</p>
+
+<p>If the input events don't follow the difference approach,
+then the event should ensure it stores everything needed for reversal
+during processing. You can do this by storing the previous values on
+any value that is changed, or by calculating and storing differences
+on the event.</p>
+
+<p>This requirement to store has a significant consequence when
+the processing logic is inside a domain model, since the domain model
+may alter its internal state in ways which shouldn't be visible to the
+event object's processing. In this case it's best to design the domain
+model to be aware of events and to be able to use them in order to
+store prior values.</p>
+
+<p>It's worth remembering that all the capabilities of reversing
+      events can be done instead by reverting to a past snapshot and
+      replaying the event stream. As a result reversal is never
+      absolutely needed for functionality. However it may make a big
+      difference to efficiency since you may often be in a position
+      where reversing a few events is much more efficient than using
+      forward play on a lot of events.</p>
+</section>
+
+<section id="ExternalUpdates">
+<h3>External Updates</h3>
+
+<p>One of the tricky elements to <span class="self">Event Sourcing</span> is how to deal with 
+      external systems that don't follow this approach (and most
+      don't). You get problems when you are sending modifier messages
+      to external systems and when you are receiving queries from
+      other systems.</p>
+
+<p>Many of the advantages of <span class="self">Event Sourcing</span> stem from the ability
+      to replay events at will, but if these events cause update messages to
+      be sent to external systems, then things will go wrong because
+      those external systems don't know the difference between real
+      processing and replays.</p>
+
+<p>To handle this you'll need to wrap any external systems with
+      a <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/gateway.html">Gateway</a>. This in itself isn't too onerous
+      since it's a thoroughly good idea in any case. The gateway has
+      to be a bit more sophisticated so it can deal with any replay
+      processing that the <span class="self">Event Sourcing</span> system is doing.</p>
+
+<p>For rebuilds and temporal queries it's usually sufficient for
+      the gateways to be able to be disabled during the replay
+      processing. You want to do this in a way that's invisible to the
+      domain logic. If the domain logic calls PaymentGateway.send it
+      should do so whether or not you are in replay mode. The
+      gateway should handle that distinction by having a reference to
+      the event processor and checking the whether it's in replay mode
+      before passing the external call off to the outside world.</p>
+
+<p>External updates get more complicated if you are using
+      <a href="RetroactiveEvent.html">Retroactive Event</a> see the discussion there
+      for gory details.</p>
+
+<p>Another tactic that you might see with external systems is
+      buffering the external notifications by time. It may be that we
+      don't need to make the external notification right away, instead
+      we only need to do it at the end of the month. In this case we
+      can reprocess more freely until that time appears. We can deal
+      with this either by having gateways that store external messages
+      till the release date, or triggering the external messages
+      through a notification domain event rather than doing the
+      notification  immediately.</p>
+</section>
+
+<section id="ExternalQueries">
+<h3>External Queries</h3>
+
+<p>The primary problem with external queries is that the data
+      that they return has an effect on the results on handling an
+      event. If I ask for an exchange rate on December 5th and replay
+      that event on December 20th, I will need the exchange rate on
+      Dec 5 not the later one.</p>
+
+<p>It may be that the external system can give me past data by
+      asking for a value on a date. If it can, and we trust it to be
+      reliable, then we can use that to ensure consistent replay. It also may be that we are using <a href="EventCollaboration.html">Event Collaboration</a>, in which case all we have to ensure we retain the history of changes.</p>
+
+<p>If we can't use those simple plans then we have to do something a bit more involved. One approach is to design the
+      gateway to the external system so that it remembers the
+      responses to its queries and uses them during replay. To be
+      complete this means that the response to every external query
+      needs to be remembered. If the external data changes slowly it
+      may be reasonable to only remember changes when values change.</p>
+</section>
+
+<section id="ExternalInteraction">
+<h3>External Interaction</h3>
+
+<p>Both queries and updates to external systems cause a lot of
+      complication with <span class="self">Event Sourcing</span>. You get the worst of both with
+      interactions that involve both. Such an interaction might be a
+      an external call that both returns a result (a query) but also
+      causes a state change to the external system, such as submitting
+      an order for delivery that return delivery information on that order.</p>
+</section>
+
+<section id="CodeChanges">
+<h3>Code Changes</h3>
+
+<p>So this discussion has made the assumption that the
+      application processing the events stays the same. Clearly that's
+      not going to be the case. Events handle changes to data, what
+      about changes to code?</p>
+
+<p>We can think as three broad kinds of code changes here: new
+      features, defect fixes, and temporal logic.</p>
+
+<p>New features essentially add new capabilities to the system
+      but don't invalidate things that happened before. These can be
+      added pretty freely at any time. If you want to take advantage
+      of the new features with old events you can just reprocess the
+      events and the new results pop up.</p>
+
+<p>When reprocessing with new features you'll usually want
+      the external gateways turned off, which is the normal case. The
+      exception is when the new features involve these gateways. Even
+      then you may not want to notify for past events, if you do
+      you'll need to put some special handling in for the first
+      reprocess of the old events. It'll be kludgey, but you'll only
+      have to do it once.</p>
+
+<p>Bug fixes occur when you look at past processing and realize
+      it was incorrect. For internal stuff this is really easy to fix,
+      all you need to do is make the fix and reprocess the
+      events. Your application state is now fixed to what it should
+      have been. For many situations this is really rather nice.</p>
+
+<p>Again external gateways bring the complexity. Essentially the
+      gateways need to track the difference between what happened with
+      the bug, and what happens without it. The idea is similar to
+      what needs to happen with <a href="RetroactiveEvent.html">Retroactive Events</a>. Indeed if there's
+      a lot of reprocessing to consider it would be worth actually
+      using the <a href="RetroactiveEvent.html">Retroactive Event</a> mechanism to
+      replace an event with itself, although to do that you'll need to
+      ensure the event can correctly reverse the buggy event as well
+      as the correct one.</p>
+
+<p>The third case is where the logic itself changes over time, a
+rule along the lines of “charge $10 before November 18 and $15
+afterwords”. This kind of stuff needs to actually go into the domain
+model itself. The domain model should be able to run events at any
+time with the correct rules for the event processing. You can do this
+with conditional logic, but this will get messy if you have much
+temporal logic. The better route is to hook strategy objects into a
+<a href="TemporalProperty.html">Temporal Property</a>: something like
+<code>chargingRules.get(aDate).process(anEvent)</code>. Take a look at
+<a href="AgreementDispatcher.html">Agreement Dispatcher</a> for this kind of style.</p>
+
+<p>There is potentially an overlap between dealing with bugs and
+      temporal logic when old events need to be processed using the
+      the buggy code. This may lead into bi-temporal
+      behavior: “reverse this event according to the rules for Aug 1
+      that we had on Oct 1 and replace it according to the rules for
+      Aug 1 that we have now”. Clearly this stuff can get very messy,
+      don't go down this path unless you really need to.</p>
+
+<p>Some of these issues can be handled by putting the code in
+      the data. Using Adaptive Object Models that figure out the
+      processing using configurations of objects is one way to do
+      this. Another might be embed scripts into your data using some
+      directly executable language that doesn't require compilation -
+      embedding JRuby into a Java app for example. Of course the
+      danger here is keeping under proper configuration control. I
+      would be inclined to do it by ensuring any change to the
+      processing scripts was handled in the same way as any other
+      update - through an event. (Although by now I'm certainly drifting away
+      from observation to speculation.)</p>
+</section>
+
+<section id="EventsAndAccounts">
+<h3>Events and Accounts</h3>
+
+<p>I've seen some particularly strong examples of <span class="self">Event Sourcing</span> (and
+      consequent patterns) in the context of accounting systems. The
+      two have a very good synergy between them, both in their
+      requirements (audit is very important for accounting systems)
+      and in their implementation. A key factor here is that you can
+      arrange things so that all the accounting consequences of a
+      <a href="DomainEvent.html">Domain Event</a> are the creation of <a href="AccountingEntry.html">Accounting Entrys</a> and link these entries to
+      the original event. This gives you a very good basis for
+      tracking changes, reversal, and the like. In particular it
+      simplified the various adjustment techniques.</p>
+
+<p>Indeed one way of thinking about accounts is that the
+      <a href="AccountingEntry.html">Accounting Entrys</a> are a log of
+      all of the events that change the value of an <a href="Account.html">Account</a>, so that an <a href="Account.html">Account</a> is
+          itself an example of <span class="self">Event Sourcing</span>.</p>
+</section>
+</section>
+
+<section class="when">
+<h2>When to Use It</h2>
+
+<p>Packaging up every change to an application as an event
+is an interface style that not everyone is comfortable with, and many
+find to be awkward. As a result it's not a natural choice and to use
+it means that you expect to get some form of return.</p>
+
+<p>One obvious form of return is that it's easy to serialize the
+events to make an <a href="AuditLog.html">Audit Log</a>.Such an audit
+trail is useful for audit, no shocks there, but also has other usages.
+I chatted with someone who got their online accounts into an awkward
+state and phoned in for help. He was impressed that the helper was
+able to tell him exactly what he did and thus was able to figure out
+how to fix it. To provide such a capability means exposing the audit
+trail to the support group so they can walk through a user's
+interaction. While <span class="self">Event Sourcing</span> is a good way of doing this, you could
+also do this with more regular logging mechanisms, and that way not
+have to deal with the odd interface.</p>
+
+<p>Another use for this kind of complete <a href="AuditLog.html">Audit Log</a> is to help with debugging. Of course, it's old hat
+    to use log files for debugging production problems. But <span class="self">Event Sourcing</span>
+    can go further, allowing you to create a test environment and
+    replay the events into the test environment to see exactly what
+    happend, with the ability to stop, rewind, and replay just like
+    you can when executing tests in a debugger. This can be
+    particularly valuable to do parallel testing before putting an
+    upgrade into production. You can replay the actual events in your
+    test system and test that you get the answers you expect.</p>
+
+<p><span class="self">Event Sourcing</span> is the foundation for  <a href="ParallelModel.html">Parallel Models</a> or <a href="RetroactiveEvent.html">Retroactive Events</a>. If you want to use either of those patterns
+        you will need to use <span class="self">Event Sourcing</span> first. Indeed this goes to the
+        extent that it's very hard to retrofit these patterns onto a
+        system that wasn't built with <span class="self">Event Sourcing</span>. Thus if you think
+        there's a reasonable chance that the system will need these
+        patterns later it's wise to build <span class="self">Event Sourcing</span> now. This does seem
+        to be one of those cases where it isn't wise to leave this
+        decision to later refactoring.</p>
+
+<p><span class="self">Event Sourcing</span> also raises some possibilities for your overall
+    architecture, particularly if you are looking for something that is
+    very scalable. There is a fair amount of interest in 'event-driven
+    architecture' these days. This term covers a fair range of ideas,
+    but most of centers around systems communicating through event
+    messages. Such systems can operate in a very loosely coupled
+    parallel style which provides excellent horizontal scalability and
+    resilience to systems failure.</p>
+
+<p>An example of this would be a system with lots of readers and a
+    few writers. Using <span class="self">Event Sourcing</span> this could be delivered as a cluster of
+    systems with in-memory databases, kept up to date with each other
+    through a stream of events. If updates are needed, they can be
+    routed to a single master system (or a tighter cluster of servers
+    around a single database or message queue) which applies the
+    updates to the system of record and then broadcasts the resulting
+    events to the wider cluster of readers. Even when the system of
+    record is the application state in a database this could be a very
+    appealing structure. If the system of record is the event log,
+    there is are plenty of options for very high performance since the
+    event log is a purely additive structure that requires minimal locking.</p>
+
+<p>Such an architecture isn't flawless, of course. The reader
+    systems are liable to be out of sync with the master (and each
+    other) due to differences in timing with event
+    propagation. However this broad style of architecture is used and
+    I've heard almost entirely favorable comment about it.</p>
+
+<p>Using event streams like this also allows new applications to
+    be added easily by tapping into the event streams and populating
+    their own models, which don't need to be the same for all
+    systems. It's an approach that fits in very well with a messaging
+    approach to integration.</p>
+</section>
+
+<section class="sampleCode">
+<h2>Example: Tracking Ships (C#)</h2>
+
+<p>Here is a very simple example of <span class="self">Event Sourcing</span> to get the basic idea
+    over. For this example I'm deliberately being ultra-simple to act
+    as a starting point - then I'll use further examples to explore
+    some of the more complicated issues.</p>
+
+<p>The domain model is a simple one of ships that carry cargo and
+    move between ports.</p>
+
+<div class="figure " id="eventSourcing_shipDomainCd.gif"><img src="/web/20250607132202im_/https://www.martinfowler.com/eaaDev/eventSourcing/shipDomainCd.gif"></img>
+<p class="photoCaption"></p>
+</div>
+
+<div class="clear"></div>
+
+<p>There are four kinds of events that affect the model:</p>
+
+<ul>
+<li>Arrival: ship arrives at a port</li>
+
+<li>Departure: ship leaves a port</li>
+
+<li>Load: cargo is loaded on a ship</li>
+
+<li>Unload: cargo is unloaded from a ship</li>
+</ul>
+
+<p>Let's take a simple example of moving a ship around.</p>
+
+<p class="code-label">class Tester...
+</p>
+
+<pre>  Ship kr;
+  Port sfo, la, yyv;
+  Cargo refact;
+  EventProcessor eProc;
+
+  [SetUp]
+  public void SetUp() {
+    eProc = new EventProcessor(); 
+    refact = new Cargo ("Refactoring");
+    kr = new Ship("King Roy");
+    sfo = new Port("San Francisco", Country.US);
+    la = new Port("Los Angeles", Country.US);
+    yyv = new Port("Vancouver", Country.CANADA) ;
+  }
+</pre>
+
+<pre>[Test]
+public void ArrivalSetsShipsLocation() {
+  ArrivalEvent ev = new ArrivalEvent(new DateTime(2005,11,1), sfo, kr);
+  eProc.Process(ev);
+  Assert.AreEqual(sfo, kr.Port);
+}
+[Test]
+public void DeparturePutsShipOutToSea() {
+  eProc.Process(new ArrivalEvent(new DateTime(2005,10,1), la, kr));
+  eProc.Process(new ArrivalEvent(new DateTime(2005,11,1), sfo, kr));
+  eProc.Process(new DepartureEvent(new DateTime(2005,11,1), sfo, kr));
+  Assert.AreEqual(Port.AT_SEA, kr.Port);    
+}</pre>
+
+<p>To make these tests work we just need the arrival and departure
+    events. The event processor is very simple.</p>
+
+<p class="code-label">class EventProcessor...
+</p>
+
+<pre>  IList log = new ArrayList();  
+  public void Process(DomainEvent e) {
+    e.Process();
+    log.Add(e);
+  }
+</pre>
+
+<p>Each event has a process method.</p>
+
+<p class="code-label">class DomainEvent...
+</p>
+
+<pre>  DateTime _recorded, _occurred;
+  internal DomainEvent (DateTime occurred) {
+    this._occurred = occurred;
+    this._recorded = DateTime.Now;
+  }
+  abstract internal void Process();
+</pre>
+
+<p>The arrival event simply captures the data and has a process
+    method that simply forwards the event to an appropriate domain object.</p>
+
+<p class="code-label">class DepartureEvent...
+</p>
+
+<pre>  Port _port;
+  Ship _ship;
+  internal Port Port  {get { return _port; }}
+  internal Ship Ship  {get { return _ship; }}
+  internal DepartureEvent(DateTime time, Port port, Ship ship) : base (time)  {
+    this._port = port;
+    this._ship = ship;
+  }
+  internal override void Process() {
+    Ship.HandleDeparture(this);
+  }
+</pre>
+
+<p>So here the event just does the processing selection logic. The
+    processing domain logic is done by the ship.</p>
+
+<p class="code-label">class Ship...
+</p>
+
+<pre>  public Port Port;
+  public void HandleDeparture(DepartureEvent ev) {
+    Port = Port.AT_SEA;
+  }
+</pre>
+
+<p>A departure event just sets the Ship's port to a <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/specialCase.html">Special Case</a>. You'll notice I'm passing the event into the
+    domain object. There is a choice here about whether the event
+    should pass in just the data the domain object needs for its
+    processing, or pass in the event itself. By passing the event the
+    event doesn't need to know exactly what data the domain logic
+    needs. If the event gains additional data later, there's no need
+    to update signatures. The downside of passing the event is that
+    the domain logic is now aware of the event itself.</p>
+
+<p>That simple test just shows how the basic event processing
+    works. Now I'll show a little domain logic to see how that would
+    work. Our ships are transporting books to satisfy my fantasies of
+    having an entire shipping line to move my books around the
+    world. As I'm sure you know, it's very dangerous to send books through
+    Canada, since it's this runs the risk of the books being contaminated
+    with lots of “eh”. I've seen books where nearly every sentence has
+    a eh (longer sentences can get two or three).</p>
+
+<p>So my perfect book shipping system would be able to detect if a
+    cargo had passed through Canada.</p>
+
+<p class="code-label">class Tester...
+</p>
+
+<pre>  [Test]
+  public void VisitingCanadaMarksCargo() {
+    eProc.Process(new LoadEvent(new DateTime(2005,11,1), refact, kr));
+    eProc.Process(new ArrivalEvent(new DateTime(2005,11,2), yyv, kr));
+    eProc.Process(new DepartureEvent(new DateTime(2005,11,3), yyv, kr ));
+    eProc.Process(new ArrivalEvent(new DateTime(2005,11,4), sfo, kr));
+    eProc.Process(new UnloadEvent(new DateTime(2005,11,5), refact, kr));
+    Assert.IsTrue(refact.HasBeenInCanada);
+  }
+</pre>
+
+<p>Since the cargo may be moved between ships and offloaded, it's
+    the cargo that has the responsibility of knowing whether it's been
+    exposed to these northern dangers. Fortunately the risk only
+    occurs when actually in a port, just being in the waters is
+    safe. So our arrival event has to keep track of this.</p>
+
+<p class="code-label">class ArrivalEvent...
+</p>
+
+<pre>  Port _port;
+  Ship _ship; 
+  internal ArrivalEvent (DateTime occurred, Port port, Ship ship) : base (occurred) {
+    this._port = port;
+    this._ship = ship;
+  } 
+  internal Port Port {get {return _port;}}
+  internal Ship Ship {get{return _ship;}}
+  
+  internal override void Process() {
+    Ship.HandleArrival(this);
+  }
+</pre>
+
+<p>Again the handler is the Ship object.</p>
+
+<p class="code-label">class Ship...
+</p>
+
+<pre>  IList cargo;
+  public void HandleArrival (ArrivalEvent ev) {
+    Port = ev.Port;
+    foreach (Cargo c in cargo) c.HandleArrival(ev);
+  }
+</pre>
+
+<p>The ship isn't responsible for tracking Canadian visits so it
+    passes the arrival notification on to the cargo.</p>
+
+<p class="code-label">class Cargo...
+</p>
+
+<pre>  public bool HasBeenInCanada = false;
+  public void HandleArrival(ArrivalEvent ev) {
+    if (Country.CANADA == ev.Port.Country) 
+      HasBeenInCanada = true;
+  }
+</pre>
+
+<p>Consider the alternative of where the event process method
+    holds the domain logic - it would need to have a lot of knowledge
+    of the domain model as the domain logic gets more complex. In this
+    approach the domain objects pass the event around to relevant
+    objects so they can handle it to do what they need in response.</p>
+</section>
+
+<section class="sampleCode">
+<h2>Example: Updating an External System (C#)</h2>
+
+<p>One of the great features of <span class="self">Event Sourcing</span> is that you can reprocess
+events as much as you like. However if processing events should cause
+interactions with external systems, then this is a Bad Thing. The best
+that could happen is they'll tired of all your Spam events.</p>
+
+<p>An easy way to help deal with this is to ensure that your
+    system calls external systems through gateways that can be
+    configured to ensure that no messages go out unless you are
+    processing an event 'for real'.</p>
+
+<p>I'll illustrate this with a simple example using ships and
+    ports (no cargo this time). Let's say that whenever a ship enters
+    a port it must notify the local customs authority. We can make
+    this happen in the event processing domain logic.</p>
+
+<p class="code-label">class Port...
+</p>
+
+<pre>  public void HandleArrival (ArrivalEvent ev) {
+    ev.Ship.Port = this;
+    Registry.CustomsNotificationGateway.Notify(ev.Occurred, ev.Ship, ev.Port);
+  }
+</pre>
+
+<p>Notice that this code just invokes the notification on the
+    gateway object, it doesn't care whether this is a real processing
+    or some kind of replay. The general principle here is that the
+    domain logic should never care about the context of the running of
+    the events.</p>
+
+<p>It's the gateway's responsibility to figure out whether to
+    actually send the message on or not. Since this case is pretty
+    simple, it does this simply by having a link to the event
+    processor and checking to see if the processor is active.</p>
+
+<p class="code-label">class CustomsEventGateway...
+</p>
+
+<pre>  EventProcessor processor;
+  public void Notify (DateTime arrivalDate, Ship ship, Port port) {
+    if (processor.isActive) 
+      SendToCustoms(BuildArrivalMessage(arrivalDate, ship, port));
+  }
+</pre>
+
+<p>The event processor simply makes itself active when doing
+    regular processing.</p>
+
+<p class="code-label">class EventProcessor...
+</p>
+
+<pre>  public void Process(DomainEvent e) {
+    isActive = true;
+    e.Process();
+    isActive = false;
+    log.Add(e);
+  }
+</pre>
+
+<p>Although this case is very simple, the fundamental principles
+    are the same. Gateways decide whether to send an external message,
+    not the domain logic. The gateways decide this based on
+    information they gather about the context of the processing. In
+    this case a simple boolean state from the processor is
+    enough.</p>
+</section>
+
+<section class="sampleCode">
+<h2>Example: Reversing an Event (C#)</h2>
+
+<p>Here we'll take the shipping example and see how to reverse the
+    events. The critical thing we need for reversal is to ensure that
+    we can accurately calculate the prior state of any object that
+    has changed state due to the event.</p>
+
+<p>A good place to store this prior data is on the event itself,
+    something that works quite well with the example's approach of
+    passing the event around the domain objects. Since the domain
+    objects have the event to hand, they can easily store information
+    on the event for them.</p>
+
+<p>The load event makes a simple example. The event carries the
+    following source data.</p>
+
+<p class="code-label">class LoadEvent...
+</p>
+
+<pre>  int _shipCode;
+  string _cargoCode;
+  internal LoadEvent(DateTime occurred, string cargo, int ship) : base(occurred){
+    this._shipCode = ship;
+    this._cargoCode = cargo;
+  }
+  internal Ship Ship {get { return Ship.Find(_shipCode); }}
+  internal Cargo Cargo {get { return Cargo.Find(_cargoCode); }}
+</pre>
+
+<p>The processing is handed off to the cargo object, which needs
+    to store the port that was the prior location of the cargo.</p>
+
+<p class="code-label">class LoadEvent...
+</p>
+
+<pre>  internal override void Process() {
+    Cargo.HandleLoad(this);
+  }
+</pre>
+
+<pre>internal Port priorPort;
+</pre>
+
+<p class="code-label">class Cargo...
+</p>
+
+<pre>  internal void HandleLoad(LoadEvent ev) {
+    ev.priorPort = _port;
+    _port = null;
+    _ship = ev.Ship;
+    _ship.HandleLoad(ev);
+  }
+</pre>
+
+<p>To reverse the event we add a reverse method that mirrors the
+    process method, calling a reversal method on the domain object.</p>
+
+<p class="code-label">class LoadEvent...
+</p>
+
+<pre>  internal override void Reverse() {
+    Cargo.ReverseLoad(this);
+  }
+</pre>
+
+<p class="code-label">class Cargo...
+</p>
+
+<pre>  public void ReverseLoad(LoadEvent ev) {
+    _ship.ReverseLoad(ev);
+    _ship = null;
+    _port = ev.priorPort;
+  }
+</pre>
+
+<p>In this case the event takes on a bunch of mutable prior data
+    which is part of its processing data. In cases like this, simple
+    fields suffice. Other cases can require a more sophisticated data
+    structure. When the cargo handles an arrival event, it keeps track
+    of whether it's been in Canada eh. It can do this with a simple
+    boolean field. To store the prior value on the event needs more
+    than a simple field since many cargoes can be affected by an
+    arrival. So in this case I use a map indexed by the cargo.</p>
+
+<p class="code-label">class Cargo...
+</p>
+
+<pre>  public void HandleArrival(ArrivalEvent ev) {
+    ev.priorCargoInCanada[this] = _hasBeenInCanada;
+    if ("CA" == ev.Port.Country) 
+      _hasBeenInCanada = true;
+  }
+  private bool _hasBeenInCanada = false;
+  public bool HasBeenInCanada {get { return _hasBeenInCanada;}}
+</pre>
+
+<p class="code-label">class ArrivalEvent...
+</p>
+
+<pre>  internal Port priorPort;
+  internal IDictionary priorCargoInCanada = new Hashtable();
+</pre>
+
+<p>Then to reverse:</p>
+
+<p class="code-label">class Cargo...
+</p>
+
+<pre>  public void ReverseArrival(ArrivalEvent ev) {
+    _hasBeenInCanada = (bool) ev.priorCargoInCanada[this];
+  }
+</pre>
+
+<p>This example nicely illustrates how the source data on the
+    event and the error handling affects how we do reversal. For the
+    load event we need to store the port that the cargo was at when it
+    was loaded. If the event included this on its source data we
+    wouldn't have to do this. A bit of extra source data removes the
+    need to add prior data. This doesn't work everywhere: the arrival
+    event can't source the prior Canadian state of its cargoes.</p>
+
+<p>What's deemed correct processing can also make a
+    difference. In this system we have both arrival events and
+    departure events for ships. Assuming all works correctly we should
+    always get these interleaved. Thus a ship could reverse an arrival
+    event by setting its port field to
+    <code>Port.OUT_TO_SEA</code>. What happens when we get two arrival
+    events in succession? To reverse this we need to store the prior
+    port on the ship. Our alternative would be to declare a second
+    arrival without a departure as an error, we don't need to do this
+    storage.</p>
+
+<p></p>
+</section>
+
+<section class="sampleCode">
+<h2>Example: External Query (C#)</h2>
+
+<p>External queries are awkward even for basic <span class="self">Event Sourcing</span> because if
+    you want to rebuild the application state you need to do this
+    using external query responses that were made in the past. </p>
+
+<p>Let's imagine a case where a ship has to determine the value of
+    its cargoes when it enters a port. This valuation is done by an
+    external service. If a ship enters a port on November 3rd and I
+    process the event immediately, I'll get the value of that cargo as
+    at November 3rd. If I rebuild my application state on December 5th
+    I'll want the same value of the cargo, even if its value has
+    changed in the meantime.</p>
+
+<p>For this example I'll show one way of handling this by keeping
+    a record of external queries and using them to provide values when
+    reprocessing an event. In many ways it's a similar approach to
+    that you use with an external update - turn the interaction into
+    events at the boundary of the system and use the record of events
+    to remember what happened.</p>
+
+<p>Using a similar style to event handling that I'm using
+    elsewhere in these examples, we pass the event to the domain
+    objects to handle. In this case the cargo initiates the call to
+    the external system and saves the value. (We'll assume we're going
+    to actually do something useful with this value, but that's not
+    relevant to this example.)</p>
+
+<p class="code-label">class Cargo...
+</p>
+
+<pre>  public void HandleArrival(ArrivalEvent ev) {
+    declaredValue = Registry.PricingGateway.GetPrice(this);
+  }
+  private Money declaredValue;
+</pre>
+
+<p>As is my habit, I encapsulate all external system access
+    through a <a href="/web/20250607132202/https://www.martinfowler.com/eaaCatalog/gateway.html">Gateway</a> that I control. The basic
+    gateway will just translate the call into whatever is needed for
+    the external interaction. To support replaying events I just wrap
+    this with a class that logs these queries.</p>
+
+<div class="figure " id="eventSourcing_externalQueryOD.gif"><img src="/web/20250607132202im_/https://www.martinfowler.com/eaaDev/eventSourcing/externalQueryOD.gif"></img>
+<p class="photoCaption">Figure 6: Wrapping the
+    gateway with a logging gateway to support proper rebuilding from
+    events.</p>
+</div>
+
+<div class="clear"></div>
+
+<p>The logging gateway checks each call to see if it has an old
+    request that matches this one, if not it makes a new request.</p>
+
+<p class="code-label">class LoggedPricingGateway...
+</p>
+
+<pre>  public Money GetPrice(Cargo cargo) {
+    GetPriceRequest oldReq = oldRequest(cargo);
+    if (null != oldReq) return (Money) oldReq.Result; 
+    else return newRequest(cargo);
+  }
+</pre>
+
+<p>If the request is a new one, it turns the request into an event
+    object, invokes the external query, and stores it in the log.</p>
+
+<p class="code-label">class LoggedPricingGateway...
+</p>
+
+<pre>  private Money newRequest(Cargo cargo) {
+    GetPriceRequest request = new GetPriceRequest(cargo);
+    request.Result = gateway.GetPrice(cargo);
+    log.Store(request);
+    return (Money) request.Result;
+  }
+</pre>
+
+<pre>private class GetPriceRequest : QueryEvent {
+  private Cargo cargo;
+  public GetPriceRequest(Cargo cargo) : base() {
+    this.cargo = cargo;
+  }
+</pre>
+
+<p class="code-label">class QueryEvent...
+</p>
+
+<pre>  DomainEvent _eventBeingProcessed;
+  Object result;
+  public QueryEvent() {
+    _eventBeingProcessed = Registry.EventProcessor.CurrentEvent;
+  }
+  public object Result {
+    get { return result; }
+    set { result = value; }
+  }
+  public DomainEvent EventBeingProcessed {
+    get { return _eventBeingProcessed; }
+  }
+}
+</pre>
+
+<p>So to find an old request, it searches its log.</p>
+
+<p class="code-label">class LoggedPricingGateway...
+</p>
+
+<pre>  private GetPriceRequest oldRequest(Cargo cargo) {
+    IList candidates =
+      log.FindBy(EventProcessor.CurrentEvent, typeof (GetPriceRequest));
+    foreach (GetPriceRequest request in candidates) {
+      if (request.Cargo.RegistrationCode == cargo.RegistrationCode)
+        return request;
+    }
+    return null;
+  }
+</pre>
+
+<p>The query log is generic, so we can issue a query to get a few
+    items by using the <a href="DomainEvent.html">Domain Event</a> that was
+    processed and the type of request. This gives us a small set that
+    needs further checking in a gateway-specific manner.</p>
+
+<p>The log of requests will need to be persisted in the same way
+    as the log of <a href="DomainEvent.html">Domain Events</a> is
+    persisted as it's needed to rebuild the application state.</p>
+</section>
+</div>
+</main>
+
+<nav id="bottom-navmenu">
+<nav class="navmenu">
+<div class="nav-head">  <div class="search">
+    <!-- SiteSearch Google -->
+    <form method="GET" action="https://web.archive.org/web/20250607132202/https://www.google.com/search">
+      <input type="hidden" name="ie" value="UTF-8"/>
+      <input type="hidden" name="oe" value="UTF-8"/>
+      <input class="field" type="text" name="q" size="15" maxlength="255" value=""/>
+      <button class="button" type="submit" name="btnG" value=" " title="Search"/>
+      <input type="hidden" name="domains" value="martinfowler.com"/>
+      <input type="hidden" name="sitesearch" value=""/> 
+      <input type="hidden" name="sitesearch" value="martinfowler.com"/>
+    </form>
+  </div>
+
+<div class="closediv">
+<span class="close" title="close"></span>
+</div>
+</div>
+
+<div class="nav-body">
+<div class="topics">
+<h2>Topics</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/architecture">Architecture</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://refactoring.com/">Refactoring</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/agile.html">Agile</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/delivery.html">Delivery</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/microservices">Microservices</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/data">Data</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/testing">Testing</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/dsl.html">DSL</a></p>
+</div>
+
+<div class="about">
+<h2>about me</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/aboutMe.html">About</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/books">Books</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/faq.html">FAQ</a></p>
+</div>
+
+<div class="content">
+<h2>content</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/videos.html">Videos</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/tags">Content Index</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/articles/eurogames">Board Games</a></p>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/photos">Photography</a></p>
+</div>
+
+<div class="tw">
+<h2>Thoughtworks</h2>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://thoughtworks.com/insights">Insights</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://thoughtworks.com/careers">Careers</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://thoughtworks.com/radar">Radar</a></p>
+</div>
+
+<div class="feeds">
+<h2>follow</h2>
+
+<p><a href="/web/20250607132202/https://www.martinfowler.com/feed.atom">RSS</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://toot.thoughtworks.com/@mfowler">Mastodon</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://www.linkedin.com/in/martin-fowler-com/">LinkedIn</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://www.twitter.com/martinfowler">X (Twitter)</a></p>
+
+<p><a href="https://web.archive.org/web/20250607132202/https://boardgamegeek.com/blog/13064/martins-7th-decade">BGG</a></p>
+</div>
+</div>
+</nav>
+</nav>
+<footer id="page-footer">
+<div class="tw-logo">
+<a href="https://web.archive.org/web/20250607132202/http://www.thoughtworks.com/">
+<img src="/web/20250607132202im_/https://www.martinfowler.com/thoughtworks_white.png">
+</a>
+</div>
+<div class="menu-button">
+<div class="icon-bars navmenu-button"></div>
+</div>
+<div class="copyright">
+<p>© Martin Fowler | <a href="/web/20250607132202/https://www.martinfowler.com/aboutMe.html#disclosures">Disclosures</a></p>
+</div>
+</footer>
+<!-- Google Analytics -->
+<!-- New Google GA4 -->
+<!-- global site tag (gtag.js) - Google Analytics -->
+<script async src="https://web.archive.org/web/20250607132202js_/https://www.googletagmanager.com/gtag/js?id=G-6D51F4BDVF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500,
+  });
+  gtag('js', new Date());
+
+  gtag('config', 'G-6D51F4BDVF');
+</script>
+<!-- End Google Analytics -->
+<!-- used this page to disable cookies
+     https://developers.google.com/tag-platform/security/guides/consent?consentmode=basic#gtag.js
+-->
+
+
+
+<script src="/web/20250607132202js_/https://www.martinfowler.com/jquery-1.11.3.min.js" type="text/javascript"></script>
+
+<script src="/web/20250607132202js_/https://www.martinfowler.com/mfcom.js" type="text/javascript"></script>
+</body>
+</html>
+<!--
+     FILE ARCHIVED ON 13:22:02 Jun 07, 2025 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 22:34:38 Jul 02, 2025.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.498
+  exclusion.robots: 0.033
+  exclusion.robots.policy: 0.023
+  esindex: 0.008
+  cdx.remote: 5.147
+  LoadShardBlock: 105.084 (3)
+  PetaboxLoader3.datanode: 106.66 (5)
+  PetaboxLoader3.resolve: 522.022 (3)
+  load_resource: 532.45 (2)
+-->

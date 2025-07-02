@@ -1,0 +1,2414 @@
+<!doctype html><!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" > <![endif]--><!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en" >        <![endif]--><!--[if IE 8]>    <html class="no-js lt-ie9" lang="en" >               <![endif]--><!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]--><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="author" content="Kurrent Inc.">
+  <meta name="description" content="A top-level introduction to the core principles for developers and software architects looking to build event-sourced systems.">
+  <meta name="generator" content="HubSpot">
+    <title>Beginner's Guide to Event Sourcing | Kurrent</title>  
+  
+  <script type="text/javascript" src="https://secure.businessintuition247.com/js/264384.js"></script>
+  <noscript>&lt;img  alt="" src="https://secure.businessintuition247.com/264384.png" style="display:none;"&gt;</noscript>
+  
+  <script>
+    window.addEventListener("CookiebotOnAccept", function() {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "https://secure.businessintuition247.com/js/sc/264384.js";
+        document.head.appendChild(script);
+    });
+  </script>
+  
+  <script>
+    window.addEventListener("CookiebotOnDialogInit", function() {
+      if (Cookiebot.getDomainUrlParam("CookiebotScan") === "true")
+        Cookiebot.setOutOfRegion();
+    });
+  </script>
+    <link rel="shortcut icon" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/illustrations/kurrent-favicon.png">
+  
+  <link rel="preconnect" href="https://forms.hubspot.com">
+  <link rel="preconnect" href="https://js.hscollectedforms.net">
+  <link rel="preconnect" href="https://js.hs-analytics.net">
+  <link rel="preload" as="script" href="https://consent.cookiebot.com/uc.js">
+
+  <link rel="preload" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/Brand/Fonts/GTFSolinaTRIAL-Regular.woff" as="font" type="font/woff" crossorigin="anonymous">
+  <link rel="preload" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/Brand/Fonts/GTFSolinaTRIAL-Medium.woff" as="font" type="font/woff" crossorigin="anonymous">
+  <link rel="preload" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/Brand/Fonts/GTFSolinaTRIAL-Semibold.woff" as="font" type="font/woff" crossorigin="anonymous">
+  <link rel="preload" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/Brand/Fonts/GTFSolinaTRIAL-Bold.woff" as="font" type="font/woff" crossorigin="anonymous">
+
+  <link rel="preload" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/Brand/Fonts/SourceCodePro-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/Brand/Event%20Store%20logo%20(SVG)%20alt.svg" as="image" fetchpriority="high">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css" integrity="sha512-DJLNx+VLY4aEiEQFjiawXaiceujj5GA7lIY8CHCIGQCBPfsEG0nGz1edb4Jvw1LR7q031zS5PpPqFuPA8ihlRA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <style>
+    @font-face {
+      font-family: "GTFSolina";
+      src:
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Regular.woff2")
+          format("woff2"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Regular.woff")
+          format("woff"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Regular.otf")
+          format("opentype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "GTFSolina";
+      src:
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Medium.woff2")
+          format("woff2"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Medium.woff")
+          format("woff"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Medium.otf")
+          format("opentype");
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "GTFSolina";
+      src:
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-SemiBold.woff2")
+          format("woff2"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-SemiBold.woff")
+          format("woff"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-SemiBold.otf")
+          format("opentype");
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "GTFSolina";
+      src:
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Bold.woff2")
+          format("woff2"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Bold.woff")
+          format("woff"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Bold.otf")
+          format("opentype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "GTFSolina";
+      src:
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Book.woff2")
+          format("woff2"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Book.woff")
+          format("woff"),
+        url("https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Brand/Fonts/GTFSolinaTRIAL-Book.otf")
+          format("opentype");
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:description" content="A top-level introduction to the core principles for developers and software architects looking to build event-sourced systems.">
+    <meta property="og:title" content="Beginner's Guide to Event Sourcing | Kurrent">
+    <meta name="twitter:description" content="A top-level introduction to the core principles for developers and software architects looking to build event-sourced systems.">
+    <meta name="twitter:title" content="Beginner's Guide to Event Sourcing | Kurrent">
+
+    
+<!--  Added by CookieBot integration -->
+<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="ee971b30-e872-46e8-b421-706ef26d9dcc" data-blockingmode="auto" type="text/javascript">
+                </script>
+<!-- /Added by CookieBot integration -->
+
+
+    
+    <style>
+a.cta_button{-moz-box-sizing:content-box !important;-webkit-box-sizing:content-box !important;box-sizing:content-box !important;vertical-align:middle}.hs-breadcrumb-menu{list-style-type:none;margin:0px 0px 0px 0px;padding:0px 0px 0px 0px}.hs-breadcrumb-menu-item{float:left;padding:10px 0px 10px 10px}.hs-breadcrumb-menu-divider:before{content:'›';padding-left:10px}.hs-featured-image-link{border:0}.hs-featured-image{float:right;margin:0 0 20px 20px;max-width:50%}@media (max-width: 568px){.hs-featured-image{float:none;margin:0;width:100%;max-width:100%}}.hs-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px}
+</style>
+
+
+    <style>
+      @media screen and (max-width: 767px) {
+        :root {
+          /* Display Sizes - Mobile */
+          --font-display-lg: 2.75rem;   /* 44px */
+          --font-display-md: 2.5rem;    /* 40px */
+          --font-display-sm: 2.25rem;   /* 36px */
+
+          /* Heading Sizes - Mobile */
+          --font-h1: 2rem;       /* 32px */
+          --font-h2: 1.75rem;    /* 28px */
+          --font-h3: 1.625rem;   /* 26px */
+          --font-h4: 1.5rem;     /* 24px */
+          --font-h5: 1.25rem;    /* 20px */
+          --font-h6: 1.125rem;   /* 18px */
+        }
+      }
+
+      .footer-menu .social-networks {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+      }
+
+      .bg-header-fix {
+        background-color: var(--black) !important;
+      }
+
+      .footer .social-networks {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+      }
+
+      .fa-solid {
+        font-family: "Font Awesome 6 Free" !important;
+      }
+
+      i.fa-brands {
+        font-family: "Font Awesome 6 Brands" !important;
+      }
+
+      a {
+        color: var(--plum);
+      }
+
+      code[class*=language-], pre[class*=language-] {
+        font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace !important;
+      }
+
+      
+      @media screen and (max-width: 768px) {
+        #content .main .dnd-section {
+          padding-left: var(--spacing-2xl) !important;
+          padding-right: var(--spacing-2xl) !important;
+        }
+      }
+    </style>
+  
+<link rel="stylesheet" href="//6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/template_assets/1/183021615398/1734977250265/template_tailwind.min.css">
+<link rel="stylesheet" href="//6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/template_assets/1/34392370187/1742516403755/template_styles.min.css">
+<link rel="stylesheet" href="//6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/template_assets/1/183895315569/1745615052859/template_v2.min.css">
+<link rel="stylesheet" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/module_assets/1/79942459459/1740983165891/module_Main_Menu_v3_-_Live.min.css">
+
+  <style>
+    .module_16351722212454 .hs-menu-item.parent-active .hs-menu-item-arrow {
+      transform: rotate(180deg);
+    }
+  </style>
+
+<link rel="stylesheet" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/module_assets/1/168930434193/1741724062805/module_Page_Hero_2.min.css">
+
+<style>
+  .widget_1739300591459 {
+      background-color: var(--plum);
+  }
+
+  .widget_1739300591459 .hero-bg {
+      position: absolute;
+      height: 100%;
+      width: 50%;
+      top: 0;
+      right: 0;
+      pointer-events: none;
+      background-color: var(--pale-lavender);
+      background-image: url("https://www.kurrent.io/hubfs/illustrations/kurrent-db-hero-bg-pattern.svg");
+      background-size: contain;
+      background-position: center;
+      background-image: url('https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Screenshot%202025-02-11%20at%201.41.04%20PM.png');
+background-size: cover;
+background-position: center center;
+
+  }
+
+  @media screen and (max-width: 1239px) {
+    .widget_1739300591459 .hero-bg {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 1240px) {
+    .hero-wrap {
+      display: flex;
+      align-items: center;
+      min-height: 720px;
+    }
+
+    .hero-wrap.compact {
+      min-height: 400px;
+    }
+  }
+
+  .widget_1739300591459 .hero__eyebrow {
+    color: var(--pale-lavender);
+    font-size: var(--font-body-sm);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-looser);
+    border-bottom: 1px solid var(--pale-lavender);
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-md);
+  }
+
+  .widget_1739300591459 .hero__title {
+    color: var(--pale-lavender);
+    font-size: var(--font-display-md);
+    line-height: var(--line-height-display);
+    letter-spacing: var(--letter-spacing-tightest);
+  }
+
+  .widget_1739300591459 .hero__text ,
+  .widget_1739300591459 .hero__text * {
+    color: var(--pale-lavender);
+    font-size: var(--font-body);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-looser);
+  }
+
+  .widget_1739300591459 .hero__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-2xl);
+  }
+
+  .widget_1739300591459 .hero__button {
+    border-radius: 0;
+    display: inline-block;
+    font-size: var(--font-body);
+    line-height: var(--line-height-body);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: var(--letter-spacing-looser);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    text-decoration: none;
+  }
+
+  .widget_1739300591459 .hero__button:nth-child(1) {
+    color: var(--plum);
+    background-color: var(--pale-lavender);
+    border: 2px solid var(--pale-lavender);
+  }
+
+  .widget_1739300591459 .hero__button:nth-child(1):hover {
+    border-color: var(--pale-lavender);
+    background-color: transparent;
+    color: var(--pale-lavender);
+    box-shadow: unset;
+  }
+
+  .widget_1739300591459 .hero__button:nth-child(2) {
+    color: var(--pale-lavender);
+    background-color: transparent;
+    border: 2px solid var(--pale-lavender);
+  }
+
+  .widget_1739300591459 .hero__button:nth-child(2):hover {
+    border-color: var(--pale-lavender);
+    background-color: var(--pale-lavender);
+    color: var(--plum);
+    box-shadow: unset;
+  }
+
+  /* Variations */
+
+  /* Purple */
+  .widget_1739300591459.purple {
+    background-color: var(--deep-violet);
+  }
+
+  .widget_1739300591459.purple .hero-bg{
+    background-color: var(--pale-blue);
+  }
+
+  .widget_1739300591459.purple .hero__eyebrow {
+    color: var(--pale-blue);
+    border-color: var(--pale-blue);
+  }
+
+  .widget_1739300591459.purple .hero__title {
+    color: var(--pale-blue);
+  }
+
+  .widget_1739300591459.purple .hero__text ,
+  .widget_1739300591459.purple .hero__text * {
+    color: var(--pale-blue);
+  }
+
+  .widget_1739300591459.purple .hero__button:nth-child(1) {
+    color: var(--deep-violet);
+    background-color: var(--pale-blue);
+    border: 2px solid var(--pale-blue);
+  }
+
+  .widget_1739300591459.purple .hero__button:nth-child(1):hover {
+    border-color: var(--pale-blue);
+    background-color: transparent;
+    color: var(--pale-blue);
+    box-shadow: unset;
+  }
+
+  .widget_1739300591459.purple .hero__button:nth-child(2) {
+    color: var(--pale-blue);
+    background-color: transparent;
+    border: 2px solid var(--pale-blue);
+  }
+
+  .widget_1739300591459.purple .hero__button:nth-child(2):hover {
+    border-color: var(--pale-blue);
+    background-color: var(--pale-blue);
+    color: var(--pale-blue);
+    box-shadow: unset;
+  }
+
+
+  /* Cyan */
+  .widget_1739300591459.cyan {
+    background-color: var(--dark-cyan);
+  }
+
+  .widget_1739300591459.cyan .hero-bg{
+    background-color: var(--mint-green);
+  }
+
+  .widget_1739300591459.cyan .hero__eyebrow {
+    color: var(--mint-green);
+    border-color: var(--mint-green);
+  }
+
+  .widget_1739300591459.cyan .hero__title {
+    color: var(--mint-green);
+  }
+
+  .widget_1739300591459.cyan .hero__text ,
+  .widget_1739300591459.cyan .hero__text * {
+    color: var(--mint-green);
+  }
+
+  .widget_1739300591459.cyan .hero__button:nth-child(1) {
+    color: var(--mint-green);
+    background-color: var(--dark-cyan);
+    border: 2px solid var(--dark-cyan);
+  }
+
+  .widget_1739300591459.cyan .hero__button:nth-child(1):hover {
+    border-color: var(--dark-cyan);
+    background-color: transparent;
+    color: var(--dark-cyan);
+    box-shadow: unset;
+  }
+
+  .widget_1739300591459.cyan .hero__button:nth-child(2) {
+    color: var(--dark-cyan);
+    background-color: transparent;
+    border: 2px solid var(--dark-cyan);
+  }
+
+  .widget_1739300591459.cyan .hero__button:nth-child(2):hover {
+    border-color: var(--dark-cyan);
+    background-color: var(--dark-cyan);
+    color: var(--mint-green);
+    box-shadow: unset;
+  }
+
+
+  /* Yellow */
+  .widget_1739300591459.yellow {
+    background-color: var(--sunbeam);
+  }
+
+  .widget_1739300591459.yellow .hero-bg{
+    background-color: var(--sunbeam);
+  }
+
+  .widget_1739300591459.yellow .hero__eyebrow {
+    color: var(--olive-green);
+    border-color: var(--olive-green);
+  }
+
+  .widget_1739300591459.yellow .hero__title {
+    color: var(--olive-green);
+  }
+
+  .widget_1739300591459.yellow .hero__text ,
+  .widget_1739300591459.yellow .hero__text * {
+    color: var(--olive-green);
+  }
+
+  .widget_1739300591459.yellow .hero__button:nth-child(1) {
+    color: var(--sunbeam);
+    background-color: var(--olive-green);
+    border: 2px solid var(--olive-green);
+  }
+
+  .widget_1739300591459.yellow .hero__button:nth-child(1):hover {
+    border-color: var(--olive-green);
+    background-color: transparent;
+    color: var(--olive-green);
+    box-shadow: unset;
+  }
+
+  .widget_1739300591459.yellow .hero__button:nth-child(2) {
+    color: var(--olive-green);
+    background-color: transparent;
+    border: 2px solid var(--olive-green);
+  }
+
+  .widget_1739300591459.yellow .hero__button:nth-child(2):hover {
+    border-color: var(--olive-green);
+    background-color: var(--olive-green);
+    color: var(--sunbeam);
+    box-shadow: unset;
+  }
+
+  /* Olive */
+  .widget_1739300591459.olive {
+    background-color: var(--olive-green);
+  }
+
+  .widget_1739300591459.olive .hero-bg{
+    background-color: var(--olive-green);
+  }
+
+  .widget_1739300591459.olive .hero__eyebrow {
+    color: var(--sunbeam);
+    border-color: var(--sunbeam);
+  }
+
+  .widget_1739300591459.olive .hero__title {
+    color: var(--sunbeam);
+  }
+
+  .widget_1739300591459.olive .hero__text ,
+  .widget_1739300591459.olive .hero__text * {
+    color: var(--sunbeam);
+  }
+
+  .widget_1739300591459.olive .hero__button:nth-child(1) {
+    color: var(--olive-green);
+    background-color: var(--sunbeam);
+    border: 2px solid var(--sunbeam);
+  }
+
+  .widget_1739300591459.olive .hero__button:nth-child(1):hover {
+    border-color: var(--sunbeam);
+    background-color: transparent;
+    color: var(--sunbeam);
+    box-shadow: unset;
+  }
+
+  .widget_1739300591459.olive .hero__button:nth-child(2) {
+    color: var(--sunbeam);
+    background-color: transparent;
+    border: 2px solid var(--sunbeam);
+  }
+
+  .widget_1739300591459.olive .hero__button:nth-child(2):hover {
+    border-color: var(--sunbeam);
+    background-color: var(--sunbeam);
+    color: var(--olive-green);
+    box-shadow: unset;
+  }
+</style>
+
+
+  <style>
+    .widget_1611587914785 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611588044472 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .widget_1718200715027 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+<style>
+  .widget_1611592353748 h2 {
+    color: var(--black);
+    font-size: var(--font-display-sm) !important;
+    line-height: var(--line-height-heading) !important;
+    letter-spacing: var(--letter-spacing-looser) !important;
+  }
+
+  .widget_1611592353748 .feature-list li {
+    background-color: var(--plum);
+    flex-direction: column;
+    padding: var(--spacing-3xl);
+  }
+
+  .widget_1611592353748 .feature-list li img {
+    height: 36px;
+    width: 36px;
+  }
+
+  .widget_1611592353748 .feature-list h4 {
+    color: var(--pale-lavender);
+    font-size: var(--font-h6);
+    line-height: var(--line-height-heading);
+    letter-spacing: var(--letter-spacing-looser);
+    margin-bottom: 0;
+  }
+
+  .widget_1611592353748 .feature-list p {
+    color: var(--white);
+    font-size: var(--font-body);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-looser);
+    margin-top: var(--spacing-sm);
+  }
+
+  .widget_1611592353748 .feature-image {
+    width: 100%;
+  }
+
+  .widget_1611592353748 .btn {
+    border-radius: 0;
+    display: inline-block;
+    font-size: var(--font-body);
+    line-height: var(--line-height-body);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: var(--letter-spacing-looser);
+    color: var(--white);
+    background-color: var(--black);
+    border: 2px solid var(--black);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    text-decoration: none;
+  }
+
+  .widget_1611592353748 .btn:hover {
+    border-color: var(--black);
+    background-color: transparent;
+    color: var(--black);
+    box-shadow: unset;
+  }
+</style>
+
+
+<style>
+  .widget_1706177961565 .btn {
+    border-radius: 0;
+    display: inline-block;
+    font-size: var(--font-body);
+    line-height: var(--line-height-body);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: var(--letter-spacing-looser);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    text-decoration: none;
+  }
+
+  
+  .widget_1706177961565 .btn.on-blue ,
+  .widget_1706177961565 .btn.on-grey {
+    color: var(--black);
+    background-color: transparent;
+    border: 2px solid var(--black);
+  }
+
+  .widget_1706177961565 .btn.on-blue:hover ,
+  .widget_1706177961565 .btn.on-grey:hover {
+    border-color: var(--black);
+    background-color: var(--black);
+    color: var(--white);
+    box-shadow: unset;
+  }
+
+  .widget_1706177961565 .btn.on-white {
+    color: var(--white);
+    background-color: transparent;
+    border: 2px solid var(--white);
+  }
+
+  .widget_1706177961565 .btn.on-white:hover {
+    border-color: var(--white);
+    background-color: var(--white);
+    color: var(--black);
+    box-shadow: unset;
+  }
+
+  
+  .widget_1706177961565 .btn.on-blue-fill ,
+  .widget_1706177961565 .btn.on-grey-fill {
+    color: var(--white);
+    background-color: var(--black);
+    border: 2px solid var(--black);
+  }
+
+  .widget_1706177961565 .btn.on-blue-fill:hover ,
+  .widget_1706177961565 .btn.on-grey-fill:hover {
+    border-color: var(--black);
+    background-color: transparent;
+    color: var(--black);
+    box-shadow: unset;
+  }
+
+  .widget_1706177961565 .btn.on-white-fill {
+    color: var(--black);
+    background-color: var(--white);
+    border: 2px solid var(--white);
+  }
+
+  .widget_1706177961565 .btn.on-white-fill:hover {
+    border-color: var(--white);
+    background-color: transparent;
+    color: var(--white);
+    box-shadow: unset;
+  }
+</style>
+
+
+  <style>
+    .widget_1718889310603 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611673280881 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611931816919 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611938829290 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611921389210 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611931822651 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1615909651258 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611931872050 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611938869071 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+<style>
+  .widget_1706178724660 .btn {
+    border-radius: 0;
+    display: inline-block;
+    font-size: var(--font-body);
+    line-height: var(--line-height-body);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: var(--letter-spacing-looser);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    text-decoration: none;
+  }
+
+  
+  .widget_1706178724660 .btn.on-blue ,
+  .widget_1706178724660 .btn.on-grey {
+    color: var(--black);
+    background-color: transparent;
+    border: 2px solid var(--black);
+  }
+
+  .widget_1706178724660 .btn.on-blue:hover ,
+  .widget_1706178724660 .btn.on-grey:hover {
+    border-color: var(--black);
+    background-color: var(--black);
+    color: var(--white);
+    box-shadow: unset;
+  }
+
+  .widget_1706178724660 .btn.on-white {
+    color: var(--white);
+    background-color: transparent;
+    border: 2px solid var(--white);
+  }
+
+  .widget_1706178724660 .btn.on-white:hover {
+    border-color: var(--white);
+    background-color: var(--white);
+    color: var(--black);
+    box-shadow: unset;
+  }
+
+  
+  .widget_1706178724660 .btn.on-blue-fill ,
+  .widget_1706178724660 .btn.on-grey-fill {
+    color: var(--white);
+    background-color: var(--black);
+    border: 2px solid var(--black);
+  }
+
+  .widget_1706178724660 .btn.on-blue-fill:hover ,
+  .widget_1706178724660 .btn.on-grey-fill:hover {
+    border-color: var(--black);
+    background-color: transparent;
+    color: var(--black);
+    box-shadow: unset;
+  }
+
+  .widget_1706178724660 .btn.on-white-fill {
+    color: var(--black);
+    background-color: var(--white);
+    border: 2px solid var(--white);
+  }
+
+  .widget_1706178724660 .btn.on-white-fill:hover {
+    border-color: var(--white);
+    background-color: transparent;
+    color: var(--white);
+    box-shadow: unset;
+  }
+</style>
+
+
+  <style>
+    .module_1611938878537 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611938875117 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1615909996645 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611938888592 a {
+      color: var(--plum);
+    }
+  </style>
+  
+
+  <style>
+    .module_1611938891912 a {
+      color: var(--plum);
+    }
+  </style>
+  
+<link rel="stylesheet" href="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/module_assets/1/40985327280/1742180578326/module_Contents.min.css">
+
+<style>
+  .module_159782467388078 .social-networks {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+</style>
+
+<!-- Editor Styles -->
+<style id="hs_editor_style" type="text/css">
+/* HubSpot Non-stacked Media Query Styles */
+@media (min-width:768px) {
+  .cell_1611587955115-row-17-vertical-alignment > .row-fluid {
+    display: -ms-flexbox !important;
+    -ms-flex-direction: row;
+    display: flex !important;
+    flex-direction: row;
+  }
+  .cell_1612878147100-vertical-alignment {
+    display: -ms-flexbox !important;
+    -ms-flex-direction: column !important;
+    -ms-flex-pack: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+  .cell_1612878147100-vertical-alignment > div {
+    flex-shrink: 0 !important;
+  }
+}
+/* HubSpot Styles (default) */
+.body_dnd_area-row-0-padding {
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+</style>
+    
+
+    
+    <link rel="canonical" href="https://www.kurrent.io/event-sourcing">
+
+<script src="https://tag.clearbitscripts.com/v1/pk_76150744658958a6c40398b48e476c20/tags.js"></script>
+<script>
+!function(){var e="analytics",t=window[e]=window[e]||[];if(!t.initialize){if(t.invoked){window.console&&console.error&&console.error("Segment snippet included twice.");return}t.invoked=!0,t.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","screen","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware","register"],t.factory=function(r){return function(){if(window[e].initialized)return window[e][r].apply(window[e],arguments);var a=Array.prototype.slice.call(arguments);if(["track","screen","alias","group","page","identify"].indexOf(r)>-1){var i=document.querySelector("link[rel='canonical']");a.push({__t:"bpc",c:i&&i.getAttribute("href")||void 0,p:location.pathname,u:location.href,s:location.search,t:document.title,r:document.referrer})}return a.unshift(r),t.push(a),t}};for(var r=0;r<t.methods.length;r++){var a=t.methods[r];t[a]=t.factory(a)}t.load=function(r,a){var i=document.createElement("script");i.type="text/javascript",i.async=!0,i.setAttribute("data-global-segment-analytics-key",e),i.src="https://cloud.kurrent.io/segment/ajs/REDACTED";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(i,n),t._loadOptions=a},t._writeKey="REDACTED",t.SNIPPET_VERSION="5.2.1",t.load("REDACTED"),t.page({site:"docs",title:"Home"})}}();
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_DeHBgHGersY4LmDlADnPrsCPOAmMO7QFOH8f4DVEVmD', {api_host: 'https://phog.kurrent.io'})
+</script>
+<meta property="og:image" content="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Beginners%20Guide%20to%20Event%20Sourcing.png">
+<meta property="og:image:width" content="1920">
+<meta property="og:image:height" content="1080">
+<meta property="og:image:alt" content="A beginner's guide to Event Sourcing">
+<meta name="twitter:image" content="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Beginners%20Guide%20to%20Event%20Sourcing.png">
+<meta name="twitter:image:alt" content="A beginner's guide to Event Sourcing">
+
+<meta property="og:url" content="https://www.kurrent.io/event-sourcing">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="content-language" content="en">
+
+
+
+
+
+
+  
+  
+  
+  
+  <meta name="twitter:card" content="summary">
+</head>
+
+
+
+<body class="  hs-content-id-40957290454 hs-site-page page " style="">
+  
+  <header id="header-v2" class="container-fluid header">
+    
+
+
+<div class="module_16351722212454 row-fluid middle contain-1320">
+  <div class="span2 span10-sm">
+    <a href="/" title="Kurrent homepage" class="header-logo">
+      <img width="165" height="40" src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/illustrations/kurrent-logo-white.svg" alt="Kurrent logo">
+    </a>
+  </div>
+  <div class="span6 span2-sm left">
+      <div class="relative header-menu">
+        <div class="menu-button" onclick="toggleMenu(this)">
+          <div class="menu-button-bar1"></div>
+          <div class="menu-button-bar2"></div>
+          <div class="menu-button-bar3"></div>
+        </div>
+        <nav class="main-nav" aria-label="Main menu">
+          
+          <ul role="menubar" class="hidden-sm">
+            <li role="none" class="hs-menu-item hs-menu-depth-1 hs-item-has-children">
+              <a href="javascript:;" class="menu-link" role="menuitem">Platform
+                <i class="hs-menu-item-arrow fa-solid fa-chevron-down"></i>
+              </a>
+              <ul class="hs-menu-children-wrapper menu-children-wrapper-v2" data-columns="3" aria-hidden="true" style="display:none;" role="menu">
+                <div role="none" class="row-fluid top">
+                  <div role="group" class="menu-col span4">
+                      <li class="hs-menu-item hs-menu-depth-2" role="none">
+                        <a title="Kurrent (formerly Event Store)" href="https://www.kurrent.io/kurrent" class="menu-link" role="menuitem">
+                          <span class="blue">Platform</span>
+                          <p class="mt-sm subtext grey hidden-sm">Kurrent is the event-native data platform built to store and stream events with business context.</p>
+                        </a>
+                        <a title="Kurrent (formerly Event Store)" href="https://www.kurrent.io/kurrent" class="menu-link btn menu-btn-primary on-green-fill hidden-sm">Learn more</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">Kurrent</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="The world's only event-native data platform." href="https://www.kurrent.io/kurrent" class="menu-link menu-list-title" role="menuitem">Platform Overview</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Fully managed cloud hosting for Kurrent on AWS, Azure and GCP" href="https://www.kurrent.io/kurrent-platform-editions" class="menu-link menu-list-title" role="menuitem">Editions</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/releases" class="menu-link menu-list-title" role="menuitem">Releases</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">Kurrent Cloud</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Cloud Overview" href="https://www.kurrent.io/kurrent-cloud" class="menu-link menu-list-title" role="menuitem">Cloud Overview</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Sign Up" href="https://identity.eventstore.com/login?state=hKFo2SBZUV9GdjhxNWhoa0diR1ExMmVWU1RGNWFsUzVYTDhPaaFupWxvZ2luo3RpZNkgY2tiYS1Ba1NXUEhMZGlTSnNNVFBENU1wRWdNT0pTeWKjY2lk2SBxQjFkSzlnQXg2VTFIMW1pSDRMZndDcDRRMXkzcVNlWg&amp;client=qB1dK9gAx6U1H1miH4LfwCp4Q1y3qSeZ&amp;protocol=oauth2&amp;redirect_uri=https%3A%2F%2Fconsole.eventstore.cloud%2Fcallback&amp;response_type=code&amp;scope=openid%20profile" class="menu-link menu-list-title" role="menuitem">Sign Up</a>
+                      </li>
+                  </div>
+                </div>
+              </ul>
+            </li>
+            <li role="none" class="hs-menu-item hs-menu-depth-1 hs-item-has-children">
+              <a href="javascript:;" class="menu-link" role="menuitem">Use Cases
+                <i class="hs-menu-item-arrow fa-solid fa-chevron-down"></i>
+              </a>
+              <ul class="hs-menu-children-wrapper menu-children-wrapper-v2" data-columns="3" aria-hidden="true" style="display:none;" role="menu">
+                <div role="none" class="row-fluid top">
+                  <div role="group" class="menu-col span4">
+                      <li class="hs-menu-item hs-menu-depth-2" role="none">
+                        <a title="See how our customers use Kurrent" href="https://www.kurrent.io/case-studies" class="menu-link" role="menuitem">
+                          <span class="blue">Use Cases</span>
+                          <p class="mt-sm subtext grey hidden-sm"><span>How customers around the world use Kurrent.</span></p>
+                        </a>
+                        <a title="See how our customers use Kurrent" href="https://www.kurrent.io/case-studies" class="menu-link btn menu-btn-primary on-green-fill hidden-sm">Case studies</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">By Technology</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/use-cases/supercharge-kafka-with-kurrent" class="menu-link menu-list-title" role="menuitem">Kafka</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/use-cases/ai-ml-systems" class="menu-link menu-list-title" role="menuitem">AI</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/use-cases/unleash-the-power-of-ml-with-event-native-data" class="menu-link menu-list-title" role="menuitem">Machine Learning (ML)</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/use-cases/streamline-application-development-with-kurrent" class="menu-link menu-list-title" role="menuitem">Application Development</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">By Industry</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Finance companies using Event Sourcing" href="https://www.kurrent.io/use-cases/finance" class="menu-link menu-list-title" role="menuitem">Finance</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Healthcare companies using Event Sourcing" href="https://www.kurrent.io/use-cases/healthcare" class="menu-link menu-list-title" role="menuitem">Healthcare</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Government organizations using Event Sourcing" href="https://www.kurrent.io/use-cases/government" class="menu-link menu-list-title" role="menuitem">Government</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Retail companies using Event Sourcing" href="https://www.kurrent.io/use-cases/retail" class="menu-link menu-list-title" role="menuitem">Retail</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Technology companies using Event Sourcing" href="https://www.kurrent.io/use-cases/technology" class="menu-link menu-list-title" role="menuitem">Tech</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Transport companies using Event Sourcing" href="https://www.kurrent.io/use-cases/transport" class="menu-link menu-list-title" role="menuitem">Logistics &amp; Transportation</a>
+                      </li>
+                  </div>
+                </div>
+              </ul>
+            </li>
+            <li role="none" class="hs-menu-item hs-menu-depth-1 hs-item-has-children">
+              <a href="javascript:;" class="menu-link" role="menuitem">Resources
+                <i class="hs-menu-item-arrow fa-solid fa-chevron-down"></i>
+              </a>
+              <ul class="hs-menu-children-wrapper menu-children-wrapper-v2" data-columns="3" aria-hidden="true" style="display:none;" role="menu">
+                <div role="none" class="row-fluid top">
+                  <div role="group" class="menu-col span4">
+                      <li class="hs-menu-item hs-menu-depth-2" role="none">
+                        <a title="Get started with Kurrent" href="https://developers.eventstore.com" class="menu-link" role="menuitem">
+                          <span class="blue">Get Started</span>
+                          <p class="mt-sm subtext grey hidden-sm"><span>Want to start learning and using Kurrent? Visit our developer website and follow our installation and getting started instructions.</span></p>
+                        </a>
+                        <a title="Get started with Kurrent" href="https://developers.eventstore.com" class="menu-link btn menu-btn-primary on-green-fill hidden-sm">Developer website</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">Learn</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Learn how to implement Event Sourcing in your projects with our academy, which offers a wealth of self-paced and instructor-led learning." href="https://academy.kurrent.io" class="menu-link menu-list-title" target="_blank" rel="noopener" role="menuitem">Training</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="EventStoreDB blog" href="https://www.kurrent.io/blog" class="menu-link menu-list-title" role="menuitem">Blog</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Meet Kurrent experts at live and online events. Watch recorded webinars about Kurrent products and design patterns like Event Sourcing, CQRS and EDA." href="https://www.kurrent.io/events" class="menu-link menu-list-title" role="menuitem">Events and Webinars</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Developer documentation for EventStoreDB" href="https://developers.eventstore.com" class="menu-link menu-list-title" role="menuitem">Documentation</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Your questions answered" href="https://www.kurrent.io/faq" class="menu-link menu-list-title" target="_blank" rel="noopener" role="menuitem">FAQs</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Join the EventStoreDB community" href="https://www.kurrent.io/community" class="menu-link menu-list-title" role="menuitem">Community</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">Beginner Guides</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/event-sourcing" class="menu-link menu-list-title" role="menuitem">Event Sourcing</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/cqrs-pattern" class="menu-link menu-list-title" role="menuitem">CQRS</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/event-driven-architecture" class="menu-link menu-list-title" role="menuitem">Event-Driven Architecture</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://www.kurrent.io/guide-to-event-stores" class="menu-link menu-list-title" role="menuitem">Guide To Event Stores</a>
+                      </li>
+                  </div>
+                </div>
+              </ul>
+            </li>
+            <li role="none" class="hs-menu-item hs-menu-depth-1 hs-item-has-children">
+              <a href="javascript:;" class="menu-link" role="menuitem">Services
+                <i class="hs-menu-item-arrow fa-solid fa-chevron-down"></i>
+              </a>
+              <ul class="hs-menu-children-wrapper menu-children-wrapper-v2" data-columns="3" aria-hidden="true" style="display:none;" role="menu">
+                <div role="none" class="row-fluid top">
+                  <div role="group" class="menu-col span4">
+                      <li class="hs-menu-item hs-menu-depth-2" role="none">
+                        <a title="Get help with with Kurrent" href="https://www.kurrent.io/support/report-an-issue" class="menu-link" role="menuitem">
+                          <span class="blue">Report an issue</span>
+                          <p class="mt-sm subtext grey hidden-sm"><span>Let us know what issue(s) you're facing and we will do our best to help.</span></p>
+                        </a>
+                        <a title="Get help with with Kurrent" href="https://www.kurrent.io/support/report-an-issue" class="menu-link btn menu-btn-primary on-green-fill hidden-sm">Report an issue</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">Services</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Commercial support for EventStoreDB" href="https://academy.eventstore.com/" class="menu-link menu-list-title" role="menuitem">Training</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Support for Event Store Cloud" href="https://www.kurrent.io/consulting" class="menu-link menu-list-title" role="menuitem">Consulting</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span4">
+                      <span class="dark-navy menu-col-title">Community</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Find out how to join our global community of users" href="https://www.kurrent.io/community" class="menu-link menu-list-title" role="menuitem">Join our community</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://discuss.eventstore.com" class="menu-link menu-list-title" target="_blank" rel="noopener" role="menuitem">Discuss forum</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="" href="https://github.com/eventstore" class="menu-link menu-list-title" target="_blank" rel="noopener" role="menuitem">Github</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Event Store Discord" href="https://discord.gg/Phn9pmCw3t" class="menu-link menu-list-title" target="_blank" rel="noopener" role="menuitem">Discord</a>
+                      </li>
+                  </div>
+                </div>
+              </ul>
+            </li>
+            <li role="none" class="hs-menu-item hs-menu-depth-1 hs-item-has-children">
+              <a href="javascript:;" class="menu-link" role="menuitem">About
+                <i class="hs-menu-item-arrow fa-solid fa-chevron-down"></i>
+              </a>
+              <ul class="hs-menu-children-wrapper menu-children-wrapper-v2" data-columns="2" aria-hidden="true" style="display:none;" role="menu">
+                <div role="none" class="row-fluid top">
+                  <div role="group" class="menu-col span6">
+                      <li class="hs-menu-item hs-menu-depth-2" role="none">
+                        <a title="Get in touch with the team at Event Store" href="https://www.kurrent.io/talk_to_expert" class="menu-link" role="menuitem">
+                          <span class="blue">Contact Us</span>
+                          <p class="mt-sm subtext grey hidden-sm">Want to get in touch with the Kurrent team? Visit our contact page.</p>
+                        </a>
+                        <a title="Get in touch with the team at Event Store" href="https://www.kurrent.io/talk_to_expert" class="menu-link btn menu-btn-primary on-green-fill hidden-sm">Get in touch</a>
+                      </li>
+                  </div>
+                  <div role="group" class="menu-col span6">
+                      <span class="dark-navy menu-col-title">Company</span>
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="The story of Event Store" href="https://www.kurrent.io/about" class="menu-link menu-list-title" role="menuitem">Our Story</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Join the team at Event Store" href="https://www.kurrent.io/careers" class="menu-link menu-list-title" role="menuitem">Careers</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="Join the Event Store community" href="https://www.kurrent.io/community" class="menu-link menu-list-title" role="menuitem">Community</a>
+                      </li>
+                      <hr class="thin">
+                      <li class="hs-menu-item hs-menu-depth-2 mt-sm mb-sm" role="none">
+                        <a title="News from Event Store" href="https://www.kurrent.io/blog/news" class="menu-link menu-list-title" role="menuitem">Company News</a>
+                      </li>
+                  </div>
+                </div>
+              </ul>
+            </li>
+            <li role="none" class="hs-menu-item hs-menu-depth-1">
+              <a href="" class="menu-link" role="menuitem"></a>
+            </li>
+            <li role="none" class="hs-menu-item hs-menu-depth-1">
+              <a href="" class="menu-link" role="menuitem"></a>
+            </li>
+          </ul>
+          
+          <ul role="menu" class="hidden-lg">
+            <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none">
+              <a title="" href="javascript:;" class="menu-link" role="menuitem">Platform<svg><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#caret-down"></use></svg></a>
+              <ul class="hs-menu-children-wrapper" aria-hidden="true" style="display:none;" role="menu">
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="The world's only event-native data platform." href="https://www.kurrent.io/kurrent" class="menu-link" role="menuitem">
+                      <span>Platform Overview</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Fully managed cloud hosting for Kurrent on AWS, Azure and GCP" href="https://www.kurrent.io/kurrent-platform-editions" class="menu-link" role="menuitem">
+                      <span>Editions</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/releases" class="menu-link" role="menuitem">
+                      <span>Releases</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Cloud Overview" href="https://www.kurrent.io/kurrent-cloud" class="menu-link" role="menuitem">
+                      <span>Cloud Overview</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Sign Up" href="https://identity.eventstore.com/login?state=hKFo2SBZUV9GdjhxNWhoa0diR1ExMmVWU1RGNWFsUzVYTDhPaaFupWxvZ2luo3RpZNkgY2tiYS1Ba1NXUEhMZGlTSnNNVFBENU1wRWdNT0pTeWKjY2lk2SBxQjFkSzlnQXg2VTFIMW1pSDRMZndDcDRRMXkzcVNlWg&amp;client=qB1dK9gAx6U1H1miH4LfwCp4Q1y3qSeZ&amp;protocol=oauth2&amp;redirect_uri=https%3A%2F%2Fconsole.eventstore.cloud%2Fcallback&amp;response_type=code&amp;scope=openid%20profile" class="menu-link" role="menuitem">
+                      <span>Sign Up</span>
+                    </a>
+                  </li>
+              </ul>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none">
+              <a title="" href="javascript:;" class="menu-link" role="menuitem">Use Cases<svg><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#caret-down"></use></svg></a>
+              <ul class="hs-menu-children-wrapper" aria-hidden="true" style="display:none;" role="menu">
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="See how our customers use Kurrent" href="https://www.kurrent.io/case-studies" class="menu-link" role="menuitem">
+                      <span>Use Cases</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/use-cases/supercharge-kafka-with-kurrent" class="menu-link" role="menuitem">
+                      <span>Kafka</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/use-cases/ai-ml-systems" class="menu-link" role="menuitem">
+                      <span>AI</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/use-cases/unleash-the-power-of-ml-with-event-native-data" class="menu-link" role="menuitem">
+                      <span>Machine Learning (ML)</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/use-cases/streamline-application-development-with-kurrent" class="menu-link" role="menuitem">
+                      <span>Application Development</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Finance companies using Event Sourcing" href="https://www.kurrent.io/use-cases/finance" class="menu-link" role="menuitem">
+                      <span>Finance</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Healthcare companies using Event Sourcing" href="https://www.kurrent.io/use-cases/healthcare" class="menu-link" role="menuitem">
+                      <span>Healthcare</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Government organizations using Event Sourcing" href="https://www.kurrent.io/use-cases/government" class="menu-link" role="menuitem">
+                      <span>Government</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Retail companies using Event Sourcing" href="https://www.kurrent.io/use-cases/retail" class="menu-link" role="menuitem">
+                      <span>Retail</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Technology companies using Event Sourcing" href="https://www.kurrent.io/use-cases/technology" class="menu-link" role="menuitem">
+                      <span>Tech</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Transport companies using Event Sourcing" href="https://www.kurrent.io/use-cases/transport" class="menu-link" role="menuitem">
+                      <span>Logistics &amp; Transportation</span>
+                    </a>
+                  </li>
+              </ul>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none">
+              <a title="" href="javascript:;" class="menu-link" role="menuitem">Resources<svg><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#caret-down"></use></svg></a>
+              <ul class="hs-menu-children-wrapper" aria-hidden="true" style="display:none;" role="menu">
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Get started with Kurrent" href="https://developers.eventstore.com" class="menu-link" role="menuitem">
+                      <span>Get Started</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Learn how to implement Event Sourcing in your projects with our academy, which offers a wealth of self-paced and instructor-led learning." href="https://academy.kurrent.io" class="menu-link" target="_blank" rel="noopener" role="menuitem">
+                      <span>Training</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="EventStoreDB blog" href="https://www.kurrent.io/blog" class="menu-link" role="menuitem">
+                      <span>Blog</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Meet Kurrent experts at live and online events. Watch recorded webinars about Kurrent products and design patterns like Event Sourcing, CQRS and EDA." href="https://www.kurrent.io/events" class="menu-link" role="menuitem">
+                      <span>Events and Webinars</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Developer documentation for EventStoreDB" href="https://developers.eventstore.com" class="menu-link" role="menuitem">
+                      <span>Documentation</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Your questions answered" href="https://www.kurrent.io/faq" class="menu-link" target="_blank" rel="noopener" role="menuitem">
+                      <span>FAQs</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Join the EventStoreDB community" href="https://www.kurrent.io/community" class="menu-link" role="menuitem">
+                      <span>Community</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/event-sourcing" class="menu-link" role="menuitem">
+                      <span>Event Sourcing</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/cqrs-pattern" class="menu-link" role="menuitem">
+                      <span>CQRS</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/event-driven-architecture" class="menu-link" role="menuitem">
+                      <span>Event-Driven Architecture</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://www.kurrent.io/guide-to-event-stores" class="menu-link" role="menuitem">
+                      <span>Guide To Event Stores</span>
+                    </a>
+                  </li>
+              </ul>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none">
+              <a title="" href="javascript:;" class="menu-link" role="menuitem">Services<svg><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#caret-down"></use></svg></a>
+              <ul class="hs-menu-children-wrapper" aria-hidden="true" style="display:none;" role="menu">
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Get help with with Kurrent" href="https://www.kurrent.io/support/report-an-issue" class="menu-link" role="menuitem">
+                      <span>Report an issue</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Commercial support for EventStoreDB" href="https://academy.eventstore.com/" class="menu-link" role="menuitem">
+                      <span>Training</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Support for Event Store Cloud" href="https://www.kurrent.io/consulting" class="menu-link" role="menuitem">
+                      <span>Consulting</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Find out how to join our global community of users" href="https://www.kurrent.io/community" class="menu-link" role="menuitem">
+                      <span>Join our community</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://discuss.eventstore.com" class="menu-link" target="_blank" rel="noopener" role="menuitem">
+                      <span>Discuss forum</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="" href="https://github.com/eventstore" class="menu-link" target="_blank" rel="noopener" role="menuitem">
+                      <span>Github</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Event Store Discord" href="https://discord.gg/Phn9pmCw3t" class="menu-link" target="_blank" rel="noopener" role="menuitem">
+                      <span>Discord</span>
+                    </a>
+                  </li>
+              </ul>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="none">
+              <a title="" href="javascript:;" class="menu-link" role="menuitem">About<svg><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#caret-down"></use></svg></a>
+              <ul class="hs-menu-children-wrapper" aria-hidden="true" style="display:none;" role="menu">
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Get in touch with the team at Event Store" href="https://www.kurrent.io/talk_to_expert" class="menu-link" role="menuitem">
+                      <span>Contact Us</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="The story of Event Store" href="https://www.kurrent.io/about" class="menu-link" role="menuitem">
+                      <span>Our Story</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Join the team at Event Store" href="https://www.kurrent.io/careers" class="menu-link" role="menuitem">
+                      <span>Careers</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="Join the Event Store community" href="https://www.kurrent.io/community" class="menu-link" role="menuitem">
+                      <span>Community</span>
+                    </a>
+                  </li>
+                  <li class="hs-menu-item hs-menu-depth-2" role="none">
+                    <a title="News from Event Store" href="https://www.kurrent.io/blog/news" class="menu-link" role="menuitem">
+                      <span>Company News</span>
+                    </a>
+                  </li>
+              </ul>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1" role="none">
+              <a title="" href="" class="menu-link" role="menuitem"></a>
+              <ul class="hs-menu-children-wrapper" aria-hidden="true" style="display:none;" role="menu">
+              </ul>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1" role="none">
+              <a title="" href="" class="menu-link" role="menuitem"></a>
+              <ul class="hs-menu-children-wrapper" aria-hidden="true" style="display:none;" role="menu">
+              </ul>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1" role="none">
+              <a title="Log in to Kurrent Cloud" href="https://console.kurrent.cloud" target="_blank" rel="noopener" class="menu-link" role="menuitem">Login</a>
+            </li>
+            <li class="hs-menu-item hs-menu-depth-1" role="none">
+              <a title="Sign Up for Kurrent Cloud" href="https://console.kurrent.cloud/signup" class="menu-link" role="menuitem">Sign Up</a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+  </div>
+  <div class="span4 span2-sm hidden-sm right" role="menu">
+    <a role="menuitem" title="Log in to Kurrent Cloud" href="https://console.kurrent.cloud" target="_blank" rel="noopener" class="menu-link btn menu-btn-secondary">Login</a>
+    <a role="menuitem" title="Sign Up for Kurrent Cloud" href="https://console.kurrent.cloud/signup" class="menu-link btn menu-btn-primary on-green-fill">Sign Up</a>
+  </div>
+</div>
+
+
+  </header>
+<style>html {scroll-behavior: unset !important}</style>
+  <section id="content" class="body">
+    <div class="bg-header-fix"></div><div class="container-fluid hero">
+<div class="row-fluid-wrapper">
+<div class="row-fluid">
+<div class="span12 widget-span widget-type-cell " style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-1 dnd-section">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-2 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1739300591459" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div id="BeginnersGuidev2" class="widget_1739300591459 red hero-wrap
+  
+  ">
+  <div class="hero-bg"></div>
+  <div class="row-fluid page-center contain-1320">
+    <div class="hero-otr span12">
+        
+      <div class="hero-header">
+        <h1 class="hero__title">A Beginner’s Guide to <span class="bold larger">Event Sourcing</span></h1>
+      </div>
+       
+      <div class="hero__text hero-txt"><p>For developers and software architects looking to <br>build event-sourced systems within modern <br>event-driven architectures.</p></div>
+      
+
+      <div class="hero__buttons">
+        <!-- CTA Button --><a href="https://www.kurrent.io/ebook-beginners-guide-to-event-sourcing" target="_self" class="hero__button">
+          Download Beginners Guide eBook
+        </a></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div>
+</div>
+</div>
+    <div class="container-fluid sticky-sidebar">
+      <div class="row-fluid contain-1320">
+        <div class="span9 pr-4 px-0-m"><div class="container-fluid main topic-main">
+<div class="row-fluid-wrapper">
+<div class="row-fluid">
+<div class="span12 widget-span widget-type-cell " style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-1 body_dnd_area-row-0-padding dnd-section">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-cell dnd-column" style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-2 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1611587914785" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block widget_1611587914785 left grey">
+  <h2 class="section">Introduction</h2>
+<hr class="mb-2 thick">
+<p>Event Sourcing has been used in production by some of the world's biggest companies (including Netflix and Walmart) for years, providing them with the platform to rapidly scale, iterate and evolve their systems, and establishing a data model that delivers a strong competitive advantage.</p>
+<p>In this guide, we discuss what Event Sourcing is, <em>why</em> you'd use it, the range of benefits it provides and we break down the jargon.</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-3 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611588044472" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611588044472 left grey">
+  <h2 class="section">What is Event Sourcing?</h2>
+<hr class="mb-2 thick">
+<p>Event Sourcing is an architectural design pattern where changes that occur in a domain are immutably stored as events in an append-only log.</p>
+<p>This provides a business with richer data as each change that occurs within the domain is stored as a sequence of events which can be replayed in the order they occurred. This means you’re able to see more than just the current state of your domain - you can see what lead up to the current state.&nbsp;</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Website%20Images/Archive/what-is-event-sourcing/ES-Basics-Diagram-2.svg" width="1000" height="515" loading="lazy" alt="ES-Basics-Diagram-2" style="height: auto; max-width: 100%; width: 1000px;"></p>
+<p>In addition, as events also contain the context of the change – the ‘what’, ‘when’, ‘why’ and ‘who’ - an event-sourced system has a wealth of information that can be incredibly valuable to the business.</p>
+<p>Event Sourcing has a <a href="/use-cases">wide variety of applications</a> across many sectors, including finance, logistics, healthcare, retail, government, transport, video game development and many more.</p>
+<h3>An Event Sourcing Example</h3>
+<p>Let's look at an order process as an example to further explain how Event Sourcing works:</p>
+<p>A customer places an order and an invoice is raised with the order details. The current status of the domain is 'outstanding' with the amount the customer owes, in this case '$200'.&nbsp;</p>
+<p>The customer receives the invoice and pays the bill, the current status is then updated to show the outstanding balance as zero. <img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Website%20Images/Archive/what-is-event-sourcing/ES-Basics-Diagram-1.svg" width="1000" height="410" loading="lazy" alt="ES-Basics-Diagram-1" style="height: auto; max-width: 100%; width: 1000px;"></p>
+<p>In an event sourced system, the status change would be captured as an event 'OrderPaymentReceived' and stored in the append-only log in the order in which it occurred.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Website%20Images/Archive/what-is-event-sourcing/ES-Basics-Diagram-3.svg" width="1000" height="673" loading="lazy" alt="ES-Basics-Diagram-3" style="height: auto; max-width: 100%; width: 1000px;"></p>
+<p>Another example, is an order discount. Let's say the customer placed an order, then a discount was applied. In a system that only captures the current state, you'll see the 'Outstanding' amount changed from $200 to $150 and won't know why. In an event sourced system, the change is captured in the event 'DiscountApplied', giving the context of the change - in this case a discount was applied.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/Website%20Images/Archive/what-is-event-sourcing/ES-Basics-Diagram-5.svg" width="1000" height="673" loading="lazy" alt="ES-Basics-Diagram-5" style="height: auto; max-width: 100%; width: 1000px;"></p>
+<p>This is how the event 'DiscountApplied' would look when implemented in code using C#.</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-4 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1718200489714" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+<script type="module" src="//6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/template_assets/1/102780002974/1742168856320/template_code-block.min.js" data-cookieconsent="ignore"></script><code-block data-tabs="single"><code-tab data-language="cs" data-escaped="true" data-label="C#" data-tabs="single">
+    public string OrderId { get; set; }
+    public double DiscountAmount { get; set; }
+    public double NewTotalAmount { get; set; }
+  </code-tab>
+</code-block></div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-5 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1718200715027" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block widget_1718200715027 left grey">
+  <p>Event Sourcing offers a lot of benefits to a business by providing much deeper and richer context to the changes that happen within a domain. Let's take a look at some of those benefits.&nbsp;</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-6 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1611592353748" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div id="" class="widget_1611592353748 container-fluid feature-grid">
+    <div style="overflow:hidden;">
+      <div class="row-fluid contain-1320">
+        <div class="span12">
+            
+              <h2 class="blue mt-1 mb-3 section left">Benefits of Event Sourcing</h2>
+              
+              <p class="grey left"></p><hr class="mb-2 thick">There are some powerful benefits to building systems using Event Sourcing, and we've gathered our top 12 benefits below.<p></p>
+            
+          <ul class="feature-list col3 left pl-0 pt-4 pb-2" data-aos="fade-up">
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-audit-sm@2x.png?width=60&amp;name=bene-audit-sm@2x.png" alt="Audit" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-audit-sm@2x.png?width=30&amp;name=bene-audit-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-audit-sm@2x.png?width=60&amp;name=bene-audit-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-audit-sm@2x.png?width=90&amp;name=bene-audit-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-audit-sm@2x.png?width=120&amp;name=bene-audit-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-audit-sm@2x.png?width=150&amp;name=bene-audit-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-audit-sm@2x.png?width=180&amp;name=bene-audit-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Audit</h4>
+                <p class="feat-text block grey">An event-sourced system stores your data as a series of immutable events over time, providing one of the strongest audit log options available. </p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-time-sm@2x.png?width=60&amp;name=bene-time-sm@2x.png" alt="Time travel" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-time-sm@2x.png?width=30&amp;name=bene-time-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-time-sm@2x.png?width=60&amp;name=bene-time-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-time-sm@2x.png?width=90&amp;name=bene-time-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-time-sm@2x.png?width=120&amp;name=bene-time-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-time-sm@2x.png?width=150&amp;name=bene-time-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-time-sm@2x.png?width=180&amp;name=bene-time-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Time travel</h4>
+                <p class="feat-text block grey">All state changes are kept, so it is possible to move systems backward and forwards in time which is extremely valuable for debugging and “what if” analysis.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-root-sm@2x.png?width=60&amp;name=bene-root-sm@2x.png" alt="Root cause analysis" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-root-sm@2x.png?width=30&amp;name=bene-root-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-root-sm@2x.png?width=60&amp;name=bene-root-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-root-sm@2x.png?width=90&amp;name=bene-root-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-root-sm@2x.png?width=120&amp;name=bene-root-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-root-sm@2x.png?width=150&amp;name=bene-root-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-root-sm@2x.png?width=180&amp;name=bene-root-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Root cause analysis</h4>
+                <p class="feat-text block grey">Business events can be tied back to their originating events providing traceability and visibility of entire workflows from start to finish.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-fault-sm@2x.png?width=60&amp;name=bene-fault-sm@2x.png" alt="Fault tolerance" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-fault-sm@2x.png?width=30&amp;name=bene-fault-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-fault-sm@2x.png?width=60&amp;name=bene-fault-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-fault-sm@2x.png?width=90&amp;name=bene-fault-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-fault-sm@2x.png?width=120&amp;name=bene-fault-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-fault-sm@2x.png?width=150&amp;name=bene-fault-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-fault-sm@2x.png?width=180&amp;name=bene-fault-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Fault tolerance</h4>
+                <p class="feat-text block grey">Event streams are fundamentally just logs with strong backup and recovery characteristics. Writing just the core “source of record” data to the event stream enables the rebuilding of  downstream projections. EventStoreDB is a distributed database technology with failover if a leader fails.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-event-sm@2x.png?width=60&amp;name=bene-event-sm@2x.png" alt="Event-driven architecture" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-event-sm@2x.png?width=30&amp;name=bene-event-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-event-sm@2x.png?width=60&amp;name=bene-event-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-event-sm@2x.png?width=90&amp;name=bene-event-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-event-sm@2x.png?width=120&amp;name=bene-event-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-event-sm@2x.png?width=150&amp;name=bene-event-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-event-sm@2x.png?width=180&amp;name=bene-event-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Event-driven architecture</h4>
+                <p class="feat-text block grey">Traditional approaches gather data in discrete areas to be called on only when needed. An event-driven approach can be more efficient by immediately reacting to new published information. Event streams can create notifications about new events, and by subscribing to the stream, business can react to these changes in real-time. This allows for easier modelling and building complex business workflows. </p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-async-sm@2x.png?width=60&amp;name=bene-async-sm@2x.png" alt="Asynchronous first" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-async-sm@2x.png?width=30&amp;name=bene-async-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-async-sm@2x.png?width=60&amp;name=bene-async-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-async-sm@2x.png?width=90&amp;name=bene-async-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-async-sm@2x.png?width=120&amp;name=bene-async-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-async-sm@2x.png?width=150&amp;name=bene-async-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-async-sm@2x.png?width=180&amp;name=bene-async-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Asynchronous first</h4>
+                <p class="feat-text block grey">Event sourced systems strive for the minimum amount of synchronous interaction; consistency boundaries are consciously chosen so that business requirements are met, and everything else is eventually consistent. This results in responsive, high performance, scalable systems.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-auto-sm@2x.png?width=60&amp;name=bene-auto-sm@2x.png" alt="Service autonomy" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-auto-sm@2x.png?width=30&amp;name=bene-auto-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-auto-sm@2x.png?width=60&amp;name=bene-auto-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-auto-sm@2x.png?width=90&amp;name=bene-auto-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-auto-sm@2x.png?width=120&amp;name=bene-auto-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-auto-sm@2x.png?width=150&amp;name=bene-auto-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-auto-sm@2x.png?width=180&amp;name=bene-auto-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Service autonomy</h4>
+                <p class="feat-text block grey">If a service goes down, dependent services can “catch up” when the source comes back up. Because events are stored in a sequence in the stream, synchronization can be achieved when each service is back online.  </p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-replay-sm@2x.png?width=60&amp;name=bene-replay-sm@2x.png" alt="Replay and reshape" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-replay-sm@2x.png?width=30&amp;name=bene-replay-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-replay-sm@2x.png?width=60&amp;name=bene-replay-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-replay-sm@2x.png?width=90&amp;name=bene-replay-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-replay-sm@2x.png?width=120&amp;name=bene-replay-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-replay-sm@2x.png?width=150&amp;name=bene-replay-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-replay-sm@2x.png?width=180&amp;name=bene-replay-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Replay and reshape</h4>
+                <p class="feat-text block grey">The series of events in a stream can be replayed and transformed to provide new insight and analytics, e.g. the event stream can be replayed to a point in time and a “what if” analysis can be used to project potential future outcomes.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-observe-sm@2x.png?width=60&amp;name=bene-observe-sm@2x.png" alt="Observability" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-observe-sm@2x.png?width=30&amp;name=bene-observe-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-observe-sm@2x.png?width=60&amp;name=bene-observe-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-observe-sm@2x.png?width=90&amp;name=bene-observe-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-observe-sm@2x.png?width=120&amp;name=bene-observe-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-observe-sm@2x.png?width=150&amp;name=bene-observe-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-observe-sm@2x.png?width=180&amp;name=bene-observe-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Observability</h4>
+                <p class="feat-text block grey">In event-sourced systems, events flow through queues and streams, allowing for unprecedented observability. What is uniquely powerful is that the events can contain the business context which allows real-time analytics.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-connect-sm@2x.png?width=60&amp;name=bene-connect-sm@2x.png" alt="Occasionally connected" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-connect-sm@2x.png?width=30&amp;name=bene-connect-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-connect-sm@2x.png?width=60&amp;name=bene-connect-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-connect-sm@2x.png?width=90&amp;name=bene-connect-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-connect-sm@2x.png?width=120&amp;name=bene-connect-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-connect-sm@2x.png?width=150&amp;name=bene-connect-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-connect-sm@2x.png?width=180&amp;name=bene-connect-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Occasionally connected</h4>
+                <p class="feat-text block grey">Since there is a log of all the state changes of an application, it can be used in occasionally connected system scenarios. When a device is disconnected it can continue to work on its own data locally and synchronize upon connection.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-flow-sm@2x.png?width=60&amp;name=bene-flow-sm@2x.png" alt="One way data flow" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-flow-sm@2x.png?width=30&amp;name=bene-flow-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-flow-sm@2x.png?width=60&amp;name=bene-flow-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-flow-sm@2x.png?width=90&amp;name=bene-flow-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-flow-sm@2x.png?width=120&amp;name=bene-flow-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-flow-sm@2x.png?width=150&amp;name=bene-flow-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-flow-sm@2x.png?width=180&amp;name=bene-flow-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">One way data flow</h4>
+                <p class="feat-text block grey">Data in a CQRS/event-sourced system flows one way, through independent models to update or read information. This brings an improved ability to reason about data and debug as each component in the data flow has a single responsibility.</p>
+              </div>
+            </li>
+            <li>
+                <div class="mr-1 icon">
+                      <img loading="lazy" class="svg60" src="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-legacy-sm@2x.png?width=60&amp;name=bene-legacy-sm@2x.png" alt="Legacy migration" width="60" srcset="https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-legacy-sm@2x.png?width=30&amp;name=bene-legacy-sm@2x.png 30w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-legacy-sm@2x.png?width=60&amp;name=bene-legacy-sm@2x.png 60w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-legacy-sm@2x.png?width=90&amp;name=bene-legacy-sm@2x.png 90w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-legacy-sm@2x.png?width=120&amp;name=bene-legacy-sm@2x.png 120w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-legacy-sm@2x.png?width=150&amp;name=bene-legacy-sm@2x.png 150w, https://6850195.fs1.hubspotusercontent-na1.net/hub/6850195/hubfs/bene-legacy-sm@2x.png?width=180&amp;name=bene-legacy-sm@2x.png 180w" sizes="(max-width: 60px) 100vw, 60px">
+                </div>
+              <div class="feat-copy">
+                <h4 class="block dark-blue">Legacy migration</h4>
+                <p class="feat-text block grey">Migration of legacy systems to modern distributed architectures can be carried out incrementally, gradually replacing specific pieces of functionality with event-sourced services. Existing read paths of the legacy system can remain in place while writes are directed to the services.</p>
+              </div>
+            </li>
+          </ul>
+          
+          
+        </div>
+      </div>
+
+  </div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-7 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1706177961565" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+<div class="widget_1706177961565 center">
+  <a class="btn on-blue-fill" title="Read more about core Event Sourcing benefits" href="https://www.eventstore.com/blog/why-event-sourcing-part-3-the-core-benefits-of-event-sourcing">Read more about core Event Sourcing benefits</a>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-8 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1718889310603" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block widget_1718889310603 left grey">
+  <p>To learn more about why you should use event sourcing, watch our video from Developer Advocate, Stephen Tung as he dives a bit deeper into the benefits of event sourcing.</p>
+<div class="hs-embed-wrapper" data-service="youtube" data-responsive="true" style="position: relative; overflow: hidden; width: 100%; height: auto; padding: 0px; max-width: 560px; min-width: 256px; display: block; margin: auto;"><div class="hs-embed-content-wrapper"><div style="position: relative; overflow: hidden; max-width: 100%; padding-bottom: 56.25%; margin: 0px;"><iframe width="560" height="315" src="https://www.youtube.com/embed/aYMKE3B5PFM?si=9Kjg6bzwmxIvV0M7" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border: none;"></iframe></div></div></div>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-9 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611673280881" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611673280881 left grey">
+  <h2 class="section">The Core Principles of Event Sourcing</h2>
+<hr class="mb-2 thick">
+<p>There are some key software architectural concepts and terms that go hand-in-hand with Event Sourcing, and we often mention them within our blog and documentation. It’s important to explain these topics at a fundamental level for context, so these are discussed below.</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-10 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611931816919" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611931816919 left grey">
+  <h3 class="section">Events</h3>
+<p>An event represents a fact that took place in the domain. They are the source of truth; your current state is derived from the events. They are immutable, and represent the business facts.&nbsp;</p>
+<p>Events are referred to in the past tense and represent the specific business fact. For example, ‘InvoiceIssued’ shows the state of the invoice has definitely changed, rather than just come into being. It’s also a better name than `InvoiceCreated` as it’s explicitly describing the fact using the business domain language. The exact definition of an event is going to depend on the business use case, and should reflect your business data.</p>
+<p>An event, in terms of Event Sourcing, usually contains unique metadata such as the timestamp of the event, the unique identifier of the subject, etc. The data within the event will be used in the write model to populate the state and make decisions, as well as populate read models.</p>
+<p>It’s this implicit information in the event name ‘InvoiceIssued’, along with the metadata and the immutable nature of the event store that makes it an excellent solution for extracting more useful, in-depth insights and context for the business.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-1.svg" alt="Events" loading="lazy"></p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-11 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611938829290" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611938829290 left grey">
+  <h3 class="section">Event-native databases (Event Store)</h3>
+<p>Each change that took place in the domain is recorded in the database. <a href="/eventstoredb" rel="noopener" target="_blank">Event-native databases</a> are natively focused on storing events. Usually, they do that by having the append-only log as the central point.&nbsp;</p>
+<p>Event-native databases are a different kind of database from traditional databases (graph, document, <a href="/blog/relational-vs-event-based-state-transition-databases" rel="noopener" target="_blank">relational</a> etc). They are specifically designed to store the history of changes, the state is represented by the append-only log of events. The events are stored in chronological order, and new events are appended to the previous event.</p>
+<p>The <strong>events are <a href="/blog/5-reasons-why-you-should-embrace-immutability-in-event-sourcing" rel="noopener" target="_blank">immutable</a></strong>: they cannot be changed. This well-known rule of event stores is often the first defining feature of event stores and Event Sourcing that most people hear, and is absolutely true, from a certain point of view.&nbsp;</p>
+<p>The events in the log can’t be changed, but their effects can be altered by later events. For example, there may be an ‘InvoiceIssued’&nbsp; event appended to the log one day, only for it to be announced that the address the invoice was issued to is incorrect. A new event can be added, with the ‘InvoiceVoided’ event, then another event with the corrected address and an ‘InvoiceIssued’ event. All three events are stored, all are still immutable, but the desired outcome is achieved: an invoice has been issued to the correct address. The events are immutable, but that does not mean that log cannot be changed.&nbsp;</p>
+<p>This is an example of the business context being kept; every stage the invoice has gone through has been kept, along with the dates and times of all events. Obviously, this information would need to be kept for auditing purposes, but imagine applying this level of information to any and all parts of the business: having an audit-level amount of information for every event in the system. The event store doesn’t lose information, and with the right configuration, you can have useful reports and analysis of the data whenever you need it.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-2.svg" alt="Event Database / Event Store" loading="lazy"></p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-12 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611921389210" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611921389210 left grey">
+  <h3 class="section">Streams</h3>
+<p>Within the event store, the events referring to a particular domain or domain object are stored in a stream. Event streams are the source of truth for the domain object and contain the full history of the changes. You can retrieve state by reading all the stream events and applying them one by one in the order of appearance.</p>
+<p>A stream should have a unique identifier representing the specific object. Each event has its own unique position within a stream. This position is usually represented by a numeric, incremental value. This number can be used to define the order of the events while retrieving the state. It can be also used to detect concurrency issues.&nbsp;</p>
+<p>Event stores are built to be able to store a huge number of events efficiently. You don’t need to be afraid of creating lots of streams, however, you should watch the number of events in those streams. Streams can be short-lived with lots of events, or long-lived with fewer events. Shorter-lived streams are helpful for maintenance and makes versioning easier.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-3.svg" alt="Streams" loading="lazy"></p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-13 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611931822651" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611931822651 left grey">
+  <h3 class="section">Projections</h3>
+<p>In Event Sourcing, <a href="/blog/projections-1-theory" rel="noopener" target="_blank">Projections</a> (also known as View Models or Query Models) provide a view of the underlying event-based data model. Often they represent the logic of translating the source write model into the read model. They are used in both read models and write models.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-8.svg" alt="ES-Pillar-8" width="1772" loading="lazy" style="width: 1772px;"></p>
+<h4>Projections in the Read Model</h4>
+<p>A common scenario in this context is taking events created in the write model (e.g. InvoiceIssued, OrderPlaced, PaymentSubmitted, OrderItemAdded, InvoicePaid, OrderConfirmed) and calculating a read model view (e.g. an order summary containing the paid invoice number, outstanding invoices items, due date status, etc.). This type of object can be stored in a different database and used for queries.&nbsp;</p>
+<p>A set of events can also be a starting point for generating another set of events. For example, you can take order events, calculate the pricing summary and generate a new order payment event and place it in another stream. This type of projection is also called transformation.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-11.svg" alt="ES-Pillar-11" width="1982" loading="lazy" style="width: 1982px;"></p>
+<h4>Projections in the Write Model</h4>
+<p>Another form of projection is called stream aggregation. It’s a process of building the current state of the write model from the stream events. During aggregation, events are applied one by one in order of appearance. The main purpose of a stream aggregation is to rebuild the current state to validate an executed command against it.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-9.svg" alt="ES-Pillar-9" width="1988" loading="lazy" style="width: 1988px;"></p>
+<p>Projections should be treated as temporary and disposable. This is one of their key benefits as they can be destroyed, reimagined and recreated at will; they should not be considered the source of truth.</p>
+<p>There is a lot of conceptual crossover between a projection and a read model, and this can lead to some confusion. The simplest way to understand the relationship between projections and read models is that a read model is made of multiple projections. The projections are the method of populating your read model, and represent discrete parts of the whole read model. For example, a projection can be used to create invoices, and another can be used as a financial report, both of which are part of the read model.&nbsp;</p>
+<p>A common misconception in explaining Event Sourcing is conflating projections with the state. In Event Sourcing, the source of truth is the events, and the state of the application is derived from these events. Facts are stored in events; projections are an interpretation of that raw data</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-14 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1615909651258" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1615909651258 left grey">
+  <h3 class="section">Subscriptions</h3>
+<p>One of the most significant advantages of Event Sourcing is observability. Each action in the system triggers an event, and the event gathers business information about the fact of the action’s result. This is a simple but powerful feature, as it allows the building complex business workflows and splitting the work down into smaller chunks.&nbsp;</p>
+<p>In Event-Driven Architecture, the responsibilities of services are inverted. The services are decoupled from each other due to the publish/subscribe approach. For example, a reservation service doesn't have to call the invoice service directly: it publishes an event about reservation confirmation, the invoice service subscribes to the reservation event stream, and can issue an invoice right after the notification.</p>
+<p>Event stores (including EventStoreDB) enable that through the subscriptions functionality. It’s a similar concept to the traditional ‘Change Data Capture’ in relational databases. Each event stored in the database can trigger a notification, and subscribers can listen to those notifications and perform follow-up actions, such as:</p>
+<ul>
+<li aria-level="1">Run a projection to update the read model,</li>
+<li aria-level="1">Perform the next step of the business process,</li>
+<li aria-level="1">Forward the event to the queuing/streaming system to notify external services.</li>
+</ul>
+<p>Usually, you can subscribe to either all events (directly from the append-only log) or partitioned/filtered events data (e.g. events from the specific stream, stream type, event type, etc.).</p>
+<p>It’s important to remember that even though event stores can provide publish/subscribe functionality, they’re usually optimised for storage, not transport. For higher throughput needs or cross-service communication, it’s worth considering using additional specialised streaming solutions, such as Kafka or Kinesis.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-5.svg" alt="Subscriptions" loading="lazy"></p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-15 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611931872050" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611931872050 left grey">
+  <h2 class="section">Related terms</h2>
+<hr class="mb-2 thick">
+<p>There is a wealth of terms and concepts related to Event Sourcing, some of which have been defined differently by various sources. We've listed some terms here that are related to Event Sourcing and provide useful context to the pattern, but there are misconceptions around.</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-16 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611938869071" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611938869071 left grey">
+  <h3 class="section">Eventual Consistency</h3>
+<p><a href="/blog/why-event-sourcing-part-1-growing-costs-of-complex-data" rel="noopener" target="_blank">Eventual consistency</a> is the idea that, in a distributed system, all the different parts of the system will eventually return all the same values. It is a form of weak consistency; not all the parts of the system may return the same values, and certain conditions will need to be met or actions taken in order to make sure all the different parts of the system are consistent.&nbsp;</p>
+<p>There’s a misconception that an eventually consistent system will be inaccurate due to the time delays involved. The time taken to return the same values may not be defined within the system, but the time frames are within the millisecond to seconds range, rather than large spans of time.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>No matter what kind of database or structure you use, eventual consistency is something you will have to deal with: it’s not a problem specific to Event Sourcing. There will always be a delay between an input being received, being recorded to storage, then called out again. One of the first misconceptions about Event Sourcing is that eventual consistency will be a major problem. This is no more of a problem for Event Sourcing as it is for any other pattern of storing data, and handling it will depend on your use case. Depending on the event store, implementation changes (do not have to be) eventually consistent. Most of the stores allow strong consistency when appending events.</p>
+<p>Watch the clip below from our "Why Event Sourcing?" video to learn more.</p>
+<div class="hs-embed-wrapper" data-service="youtube" data-responsive="true" style="position: relative; overflow: hidden; width: 100%; height: auto; padding: 0px; max-width: 256px; min-width: 256px; display: block; margin: auto;"><div class="hs-embed-content-wrapper"><div style="position: relative; overflow: hidden; max-width: 100%; padding-bottom: 56.25%; margin: 0px;"><iframe width="256" height="144.64" src="https://www.youtube.com/embed/1H8hBFlSt9g?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="Transactional Vs Eventual Consistency" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border: none;"></iframe></div></div></div>
+<p>&nbsp;</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-17 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1706178724660" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+<div class="widget_1706178724660 center">
+  <a class="btn on-blue-fill" title="Watch " why event sourcing"" href="https://youtube.com/live/aYMKE3B5PFM">Watch "Why Event Sourcing"</a>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-18 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611938878537" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611938878537 left grey">
+  <h3 class="section">Write model</h3>
+<p>The write model is responsible for handling the business logic. If you’re using <a href="#CQRS" rel="noopener">CQRS</a>, then this is the place where commands are handled. The write model has two aspects: physical and logical. The physical aspect relates to how and where data is stored, and the logical aspect reflects the business domain recreated in code structures, and can also be referred to as the Domain Model. Contrary to the traditional anaemic model, it not only contains the data but also the methods to change the data and validate it. The logic within the write model should be as close as possible to the business processes; you should be able to read the code and fully understand the business requirements from the code.&nbsp;</p>
+<p>Let’s take an example: a write model for issuing invoices. It has data, e.g. amounts, vendor names, invoice numbers, and methods like “Issue Invoice”. It has rules such as “each invoice number must be unique”, “each invoice must contain a vendor name” etc. By having the design of the system derived from the domain, we can keep all the business logic and data in one place. A write model is essential, but a read model is not always needed.&nbsp;</p>
+<p>A useful pattern to consider while implementing the write model is the aggregate. It is responsible for maintaining data consistency, and by using it we’re making sure that all related data will be stored in a single, atomic transaction. Aggregates are not necessary, but they are very common.&nbsp;</p>
+<p>In Domain Driven Design, Eric Evans discusses the granular nature of objects, and provides a definition of an aggregate. From the Domain Driven Design “blue” book:</p>
+<blockquote class="note">
+<p>An <strong>aggregate</strong> is a cluster of associated objects that we treat as a unit for the purpose of data changes. Each <strong>aggregate</strong> has a root and a boundary. The boundary defines what is inside the <strong>aggregate</strong>. The root is a single, specific <strong>entity</strong> contained in the <strong>aggregate</strong>. The root is the only member of the <strong>aggregate</strong> that outside objects are allowed to hold reference to, although objects within the boundary may hold references to each other. <strong>Entities</strong> other than the root have local identity, but that identity needs to be distinguishable only within the <strong>aggregate</strong>, because no outside object can ever see it out of the context of the root <strong>entity</strong>.</p>
+</blockquote>
+<p>This can be applied to the invoice example. An invoice is a <strong>domain object</strong>, but it is also made of several <strong>objects</strong>: the amount to be paid, the vendor name, the due date, etc. each one is part of the invoice, and the invoice joins them all together. So in the invoice example, the invoice is the <strong>aggregate</strong>. Each part of the data needed for the invoice (e.g. issuer information) is an <strong>entity</strong>. The <strong>root</strong> needs to be a single, specific entity in the aggregate, so this will be the unique invoice number.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-7.svg" alt="Invoice" loading="lazy"></p>
+<p>Aggregates are the consistency guards. They take the current state, verify the business rules for the particular operation (e.g. if there is no invoice with the same number) and apply the business logic that returns the new state. The important part of this process is storing all or nothing. All aggregated data needs to be saved successfully. If one rule or operation fails then the whole state change is rejected.</p>
+<p>In Event Sourcing, each operation made on the aggregate should result with the new <strong>event</strong>. For example, issuing the invoice should result in the InvoiceIssued event. Once the event has happened, it is recorded in the event store.</p>
+<p>It’s easy to assume that because there are aggregates, you can have one mega aggregate. However, this will cause more problems in the long run. Smaller, more concise aggregates that focus on one aspect will make a more efficient system overall and preserve the business context where needed. As an example, consider the invoice aggregate. A VAT validation process would not need all the information contained in the invoice, so this process could be a smaller, more concise aggregate. This preserves the business context where it’s needed.&nbsp;</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-19 cell_1611587955115-row-17-vertical-alignment dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-cell cell_1612878147100-vertical-alignment dnd-column" style="" data-widget-type="cell" data-x="0" data-w="12">
+
+<div class="row-fluid-wrapper row-depth-1 row-number-20 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611938875117" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611938875117 left grey">
+  <h3 class="section">Read model</h3>
+<p>Queries in <a href="#CQRS" rel="noopener">CQRS</a> represent the intention to get data. A read model contains specific information. For example, the read model contains all the invoice information (the amount, the due date, etc) and the query represents the intention to know something about the invoice, such as whether or not it has been paid.</p>
+<p>The read model can be, but doesn’t have to be, derived from the write model. It’s a transformation of the results of the business operation into a readable form.</p>
+<p>As stated in the <a href="#Projections">Projections section</a>, read models are created by projections. Events appended in the event store triggers the projection logic that creates or updates the read model.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-16.svg" alt="Read Models" loading="lazy"></p>
+<p>The read model is specialised for queries. It’s modelled to be a straightforward output that can be digested by various readers. It can be presented in many different ways, including a display on a monitor, an API, another dependent service or even to create the PDF of the invoice. In short, a read model is a general concept not tied to any type of storage.</p>
+<p>However, the read model does not have to be permanent: new read models can be introduced into the system without impacting the existing ones. Read models can be deleted and recreated without losing the business logic or information, as this is stored in the write model.</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-21 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1615909996645" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1615909996645 left grey">
+  <h3 class="section">Event Sourcing Architecture</h3>
+<p>Event Sourcing is an architectural design pattern that stores data in an append-only log. It is part of a wider ecosystem of design patterns that work together in various ways to allow developers to create the most effective architecture for their needs.&nbsp;</p>
+<p>By deploying an event store as a design pattern within a wider architecture, it allows for the inclusion of other design patterns in the system that are the most suitable for the needs of the domain. For example, an event-sourced system works well within a <a href="#CQRS" rel="noopener">CQRS</a> architecture, however it's not necessary to use them together. Event Sourcing can be deployed alongside event driven architecture, or in conjunction with <a href="#CQRS" rel="noopener">CQRS</a>, an aggregate pattern, a command handler pattern, or one of many other patterns. Each individual pattern is a useful tool on its own, that can work in concert with other related patterns to make stronger, more specific patterns for your specific use case.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-10.svg" alt="ES-Pillar-10" width="919" loading="lazy" style="width: 919px;"></p>
+<p>An event store can be a key element of a system, and that system can be as simple or as complex as the business domain requires it to be. It's useful to consider putting an event-sourced system in a part of the architecture that requires the preservation of context for all events, as this is where Event Sourcing is most effective.&nbsp;</p>
+<p><a href="https://www.eventstore.com/webinars/introduction-to-event-sourcing-on-demand" rel="noopener" target="_blank" data-mce-disabled-user-modify="true"><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-Web-Banner.svg" alt="ES-Pillar-Web-Banner" width="1740" loading="lazy" style="width: 1740px;"></a></p>
+<p>&nbsp;</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-22 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611938888592" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611938888592 left grey">
+  <h3 class="section">Domain-Driven Design</h3>
+<p>Domain Driven Design (DDD) is a method for optimizing a team’s understanding of a problem space, and how to work in that space. At its core, it’s about having a ubiquitous language between the terms used by the business users and the development team. This unification of language can be extremely useful when translating the problem concept into functioning software.</p>
+<p>Domain Driven Design was first coined by Eric Evans in his seminal work <a href="https://dddcommunity.org/book/evans_2003/">Domain-Driven Design: Tackling Complexity in the Heart of Software</a>. Evans took his experience and fused the business process and the implementation as a first step in the design process, then created a ubiquitous language based on that first step. He realised the importance of using a common language to collaborate efficiently on the project.</p>
+<p>Domain Driven Design is important because it requires meaningful and continued collaboration between the architect and the product owner. It takes the developer away from the purely technical and theoretical world, and imposes a reality on their development skills. It also forces the product owner (or customer) to think through what they require from the system and recognise the capabilities of it. By making all the stakeholders cooperate, a shared understanding is created, and progress is more efficient.</p>
+<p>The creation of a ubiquitous language involves Knowledge Crunching, the process of taking unrelated terms from business and development and creating something from the scattered terms. It’s collaborative, it can be messy, but can also be the beginning of a beautiful friendship.</p>
+<p>Using Domain Driven Design with Event Sourcing is not mandatory. However, the main concepts such as speaking the same language as the business and proper business process modelling are also good foundations for building an Event Sourcing system. The better understanding we have of the business processed, the more precise the business information will be in our events.</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-23 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_module_1611938891912" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block module_1611938891912 left grey">
+  <h3 class="section">CQRS</h3>
+<p><a href="/cqrs-pattern" rel="noopener">CQRS</a> is a development of CQS, which is an architectural pattern, and the acronym stands for Command Query Separation. CQS is the core concept that defines two types of operations handled in a system: a command that executes a task, a query that returns information, and there should never be one function to do both of these jobs. The term was created by Bertrand Meyer in his book ‘Object-oriented Software Construction’ (1988, Prentice Hall).&nbsp;</p>
+<p>CQRS is another architectural pattern acronym, standing for Command Query Responsibility Segregation. It divides a system’s actions into commands and queries. The two are similar, but not the same. <a href="https://event-driven.io/en/cqrs_facts_and_myths_explained/"><span>Oskar Dudycz describes the difference as</span></a> “CQRS can be interpreted at a higher level, more general than CQS; at an architectural level. CQS defines the general principle of behaviour. CQRS speaks more specifically about implementation”.</p>
+<p>CQRS was defined by Greg Young, <a href="http://codebetter.com/gregyoung/2010/02/16/cqrs-task-based-uis-event-sourcing-agh/"><span>and he described it as:</span></a></p>
+<blockquote class="quote">
+<p>Simply the creation of two objects where there was previously only one. The separation occurs based upon whether the methods are a command or a query (the same definition that is used by Meyer in Command and Query Separation, a command is any method that mutates state and a query is any method that returns a value).&nbsp;</p>
+</blockquote>
+<p>Using CQRS, you should have a strict separation between the write model and the read model. Those two models should be processed by separate objects and not be conceptually linked together. Those objects are not physical storage structures but are, for example command handlers and query handlers. They’re not related to where and how the data will be stored. They’re connected to the processing behaviour. Command handlers are responsible for handling commands, mutating state or doing other side effects. Query handlers are responsible for returning the result of the requested query.</p>
+<p><img src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/ES-Pillar-14.svg" alt="CQRS" loading="lazy"></p>
+<p>One of the common misconceptions about CQRS is that the commands and queries should be run on separate databases. This isn’t necessarily true; only that the behaviours and responsibilities for both should be separated. This can be within the code, within the structure of the database, or (if the situation calls for it), different databases.</p>
+<p>Expanding on that concept, CQRS doesn’t even have to use a database: It could be run off an Excel spreadsheet, or anything else containing data. <a href="https://event-driven.io/en/cqrs_facts_and_myths_explained/"><span>Oskar Dudycz described this in his article</span></a>:</p>
+<blockquote class="quote">
+<p>Nothing then stops you from using a relational database, even the same table for reading and writing. If you prefer, you can continue to use an ORM. Nothing prevents the command from adding/modifying records and query retrieving data from the same table. As long as we keep them separated in our architecture.</p>
+</blockquote>
+<p>Event sourcing and CQRS seems like a new and interesting design patterns, but they have been around for some time. CQRS can feel like a strange new technique, especially after spending years learning with a foundation based in CRUD. CQRS was described by Greg Young as a ‘<a href="https://www.youtube.com/watch?v=LDW0QWie21s"><span>stepping stone towards Event Sourcing</span></a>’. It’s important to understand event sourcing and CQRS do not rely on each other; you can have an event sourced system without CQRS and you can use CQRS without event sourcing. It’s just that the two work best together.</p>
+<p>&nbsp;</p>
+<p>Get hands on experience with application development using Event Sourcing and the Kurrent platform by taking a free course on <a href="https://academy.kurrent.io/courses" rel="noopener">Kurrent Academy</a>.&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+
+</div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+<div class="row-fluid-wrapper row-depth-1 row-number-24 dnd-row">
+<div class="row-fluid ">
+<div class="span12 widget-span widget-type-custom_widget dnd-module" style="" data-widget-type="custom_widget" data-x="0" data-w="12">
+<div id="hs_cos_wrapper_widget_1612176476166" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" style="" data-hs-cos-general-type="widget" data-hs-cos-type="module"><div class="text-block left grey">
+  <div>
+    <h2 class="section">Further reading</h2>
+  </div>
+  <div>
+    <h3 class="section"><hr class="mb-2 thick">Articles from the Event Store blog</h3>
+    <ul>
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <li><a href="https://www.kurrent.io/blog/why-event-sourcing-part-3-the-core-benefits-of-event-sourcing" title="Why Event Sourcing? Part 3 - The Core Benefits of Event Sourcing">Why Event Sourcing? Part 3 - The Core Benefits of Event Sourcing</a></li>
+          <li><a href="https://www.kurrent.io/webinars/developer-tips-to-get-the-most-from-event-sourcing" title="Webinar - Developer tips to get the most from Event Sourcing - Live">Webinar - Developer tips to get the most from Event Sourcing - Live</a></li>
+          <li><a href="https://www.kurrent.io/blog/event-sourcing-and-cqrs" title="Event Sourcing and CQRS">Event Sourcing and CQRS</a></li>
+          <li><a href="https://www.kurrent.io/webinars/event-sourcing-key-considerations-for-beginners" title="Webinar - Navigating Event Sourcing: Key considerations for beginners - On-demand">Webinar - Navigating Event Sourcing: Key considerations for beginners - On-demand</a></li>
+          <li><a href="https://www.kurrent.io/blog/turning-the-database-inside-out" title="Turning the database inside out with Event Store">Turning the database inside out with Event Store</a></li>
+          <li><a href="https://www.kurrent.io/blog/why-event-sourcing" title="Why Event Sourcing?">Why Event Sourcing?</a></li>
+          <li><a href="https://www.kurrent.io/cqrs-pattern" title="Beginner's Guide to CQRS">Beginner's Guide to CQRS</a></li>
+    </ul>
+  </div>
+  <div>
+    <h3 class="section">Other resources we recommend</h3>
+    <ul>
+          <li>
+            
+            
+            
+            
+            
+              
+            
+            <a href="https://domaincentric.net/blog/eventstoredb-vs-kafka" target="_blank" rel="noopener">
+              EventStoreDB vs Kafka
+            </a>
+          </li>
+          <li>
+            
+            
+            
+            
+            
+              
+            
+            <a href="https://event-driven.io/en/cqrs_facts_and_myths_explained/" target="_blank" rel="noopener">
+              CQRS facts and myths explained
+            </a>
+          </li>
+          <li>
+            
+            
+            
+            
+            
+              
+            
+            <a href="https://leanpub.com/esversioning/read" target="_blank" rel="noopener">
+              Versioning in an Event Sourced System
+            </a>
+          </li>
+          <li>
+            
+            
+            
+            
+            
+              
+            
+            <a href="https://medium.com/@eulerfx/scaling-event-sourcing-at-jet-9c873cac33b8" target="_blank" rel="noopener">
+              Scaling Event-Sourcing at Jet
+            </a>
+          </li>
+          <li>
+            
+            
+            
+            
+            
+              
+            
+            <a href="https://zimarev.com/blog/event-sourcing/projections/" target="_blank" rel="noopener">
+              Projections in Event Sourcing
+            </a>
+          </li>
+          <li>
+            
+            
+            
+            
+            
+              
+            
+            <a href="https://www.youtube.com/watch?app=desktop&amp;v=LDW0QWie21s" target="_blank" rel="noopener">
+              Greg Young — A Decade of DDD, CQRS, Event Sourcing
+            </a>
+          </li>
+    </ul>
+  </div>
+</div></div>
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div><!--end row-->
+</div><!--end row-wrapper -->
+
+</div><!--end widget-span -->
+</div>
+</div>
+</div>
+        </div>
+        <aside class="span3 pt-5">
+          <div class="card contents pl-1 pr-1 pt-1 pb-1 mb-5 sticky-sidebar">
+	<h4 class="dark-blue light mt-0 mb-sm">Contents</h4>
+	<ul class="list" id="contents-list">
+
+	</ul>
+</div>
+        </aside>
+      </div>
+    </div>
+  </section>
+<footer id="footer-v2" class="pt-3 pb-3 container-fluid footer">
+      <div class="row-fluid top contain-1320">
+        <div class="span12">
+          <div class="footer-menu primary module_159782467388078" role="none">
+    <nav aria-label="Footer menu">
+      
+  <ul role="menu">
+      
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="presentation">
+    <a role="presentation" class="menu-link">About us</a>
+    
+    <ul class="hs-menu-children-wrapper" role="group">
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/about" role="menuitem" class="menu-link">Our company</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/careers" role="menuitem" class="menu-link">Careers</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/community" role="menuitem" class="menu-link">Community</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/press" role="menuitem" class="menu-link">Press room</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/contact" role="menuitem" class="menu-link">Get in touch</a>
+  </li>
+    </ul>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="presentation">
+    <a role="presentation" class="menu-link">Kurrent</a>
+    
+    <ul class="hs-menu-children-wrapper" role="group">
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/kurrent" role="menuitem" class="menu-link">Kurrent Overview</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/kurrent-cloud" role="menuitem" class="menu-link">Kurrent Cloud</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/kurrent-platform-editions" role="menuitem" class="menu-link">Downloads</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://www.kurrent.io/blog/release-notes" role="menuitem" class="menu-link">Release notes</a>
+  </li>
+    </ul>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-1 hs-item-has-children" role="presentation">
+    <a role="presentation" class="menu-link">Sites</a>
+    
+    <ul class="hs-menu-children-wrapper" role="group">
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://developers.eventstore.com/" role="menuitem" class="menu-link" target="_blank" rel="noopener">Developers</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://academy.eventstore.com/" role="menuitem" class="menu-link" target="_blank" rel="noopener">Training</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://discuss.eventstore.com/" role="menuitem" class="menu-link" target="_blank" rel="noopener">Community forum</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://github.com/EventStore/EventStore" role="menuitem" class="menu-link" target="_blank" rel="noopener">Github</a>
+  </li>
+      
+  <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+    <a href="https://discord.gg/Phn9pmCw3t" role="menuitem" class="menu-link" target="_blank" rel="noopener">Discord</a>
+  </li>
+    </ul>
+  </li>
+      <li class="hs-menu-item hs-menu-depth-1" role="presentation">
+        <a class="menu-link" role="presentation">Customer logins</a>
+        <ul role="group">
+          <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+            <a href="https://console.eventstore.cloud/" target="_blank" rel="noopener" class="icon-link" role="menuitem"><svg class="icon-sm white" role="none"><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#cloud"></use></svg>Cloud sign in</a>
+          </li>
+          <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+            <a href="https://eventstore.freshdesk.com/" target="_blank" rel="noopener" class="icon-link" role="menuitem"><svg class="icon-sm white" role="none"><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#user-headset-solid"></use></svg>Support sign in</a>
+          </li>
+          
+        </ul>
+        <a class="mt-3 menu-link" role="presentation">Follow us</a>
+        <ul role="group social-networks">
+          <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+            <a href="https://twitter.com/kurrent_io" target="_blank" rel="noopener" class="icon-link" role="menuitem">
+              <i class="fa-brands fa-x-twitter"></i>
+            </a>
+          </li>
+          <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+            <a href="https://www.linkedin.com/company/kurrent-io" rel="noopener" target="_blank" class="icon-link" role="menuitem"><svg class="icon-sm white" role="none"><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#linkedin-in"></use></svg></a>
+          </li>
+          <li class="hs-menu-item hs-menu-depth-2" role="presentation">
+            <a href="https://www.youtube.com/c/EventStoreLtd" rel="noopener" target="_blank" class="icon-link" role="menuitem"><svg class="icon-sm white" role="none"><use xlink:href="/hubfs/Website%20Images/SVG/sprite.svg#youtube"></use></svg></a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    </nav>
+</div>
+
+
+        </div>
+      </div>
+      <div class="row-fluid top contain-1320">
+        <div class="span12">
+          <hr class="mt-2 mb-2">
+        </div>
+      </div>
+      <div class="row-fluid top contain-1320">
+        <div class="span8">
+          <div class="mb-2 footer-menu light-grey">
+            <ul class="important-info-footer">
+              <li><a href="https://www.kurrent.io/security">Security</a></li>
+              <li><a href="https://www.kurrent.io/terms">Terms of use</a></li>
+              <li><a href="https://www.kurrent.io/privacy">Privacy policy</a></li>
+              <li><a href="https://www.kurrent.io/cookie-preferences">Cookie preferences</a></li>
+            </ul>
+          </div>
+          <div class="mb-1 footer-menu light-grey">
+            <ul>
+              <li>© 2025 Kurrent, Inc. Context in Action<sup>™</sup></li>
+            </ul>
+          </div>
+        </div>
+        <div class="span4">
+          <div class="block footer-subscribe">
+            <p class="mt-0 strong mb-sm">Subscribe to our developer news</p>
+            <a name="subscribe"></a>
+            <div class="form--hbspt-form form--slide-labels footer-subscribe">
+              <script type="text/javascript" src="//js.hsforms.net/forms/v2.js" charset="utf-8"></script>
+              <script>
+                hbspt.forms.create({
+                  portalId: "6850195",
+                  formId: "676131bb-781f-4a6e-a7ff-1055721a5217"
+                });
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.3.1/jquery-migrate.min.js"></script>
+
+    <script defer src="//6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/template_assets/1/34506783329/1742168799314/template_scripts.min.js"></script>
+
+  
+
+<script src="/hs/hsstatic/jquery-libs/static-1.4/jquery/jquery-1.11.2.js"></script>
+<script src="/hs/hsstatic/jquery-libs/static-1.4/jquery-migrate/jquery-migrate-1.2.1.js"></script>
+<script>hsjQuery = window['jQuery'];</script>
+<!-- HubSpot performance collection script -->
+<script defer src="/hs/hsstatic/content-cwv-embed/static-1.1293/embed.js"></script>
+<script>
+var hsVars = hsVars || {}; hsVars['language'] = 'en';
+</script>
+
+<script src="/hs/hsstatic/cos-i18n/static-1.53/bundles/project.js"></script>
+<script src="https://6850195.fs1.hubspotusercontent-na1.net/hubfs/6850195/hub_generated/module_assets/1/40985327280/1742180578326/module_Contents.min.js"></script>
+
+<!-- Start of HubSpot Analytics Code -->
+<script type="text/javascript">
+var _hsq = _hsq || [];
+_hsq.push(["setContentType", "standard-page"]);
+_hsq.push(["setCanonicalUrl", "https:\/\/www.kurrent.io\/event-sourcing"]);
+_hsq.push(["setPageId", "40957290454"]);
+_hsq.push(["setContentMetadata", {
+    "contentPageId": 40957290454,
+    "legacyPageId": "40957290454",
+    "contentFolderId": null,
+    "contentGroupId": null,
+    "abTestId": null,
+    "languageVariantId": 40957290454,
+    "languageCode": "en",
+    
+    
+}]);
+</script>
+
+<script type="text/javascript" id="hs-script-loader" async defer src="/hs/scriptloader/6850195.js"></script>
+<!-- End of HubSpot Analytics Code -->
+
+
+<script type="text/javascript">
+var hsVars = {
+    render_id: "e7ba1bf2-4c25-41ee-9a37-a533f7a720ea",
+    ticks: 1750939037007,
+    page_id: 40957290454,
+    
+    content_group_id: 0,
+    portal_id: 6850195,
+    app_hs_base_url: "https://app.hubspot.com",
+    cp_hs_base_url: "https://cp.hubspot.com",
+    language: "en",
+    analytics_page_type: "standard-page",
+    scp_content_type: "",
+    
+    analytics_page_id: "40957290454",
+    category_id: 1,
+    folder_id: 0,
+    is_hubspot_user: false
+}
+</script>
+
+
+<script defer src="/hs/hsstatic/HubspotToolsMenu/static-1.432/js/index.js"></script>
+
+<style>
+.cards.case-studies .card.has-featured-image{
+    padding-top  : 282px!important;
+}
+
+.cards.case-studies .card.has-featured-image .inner .featured-image {
+    display: block;
+    height: 234px;
+    max-height: 234px;
+    padding-bottom: unset;
+    border-radius: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.cards.case-studies .card.has-featured-image .inner .featured-image .featured-image-inner {
+    position: relative;
+    padding: 85px;
+    display: flex;
+    justify-content: center;
+}
+ /* press image settings*/ 
+ .cards .card.post img.image{
+    width: 300px!important;
+    height:auto;
+ }
+</style>
+
+</body></html>
